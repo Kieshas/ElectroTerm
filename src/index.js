@@ -1,7 +1,5 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const ElectronPath = require('path');
-const serPort = require('serialport');
-const { SerialPort, ReadlineParser } = require('serialport');
 
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -37,7 +35,7 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
   handleSize(mainWindow);
-
+  const eventHandler = require('./event-handler');
 };
 
 // This method will be called when Electron has finished
@@ -65,53 +63,10 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-ipcMain.handle('updateSizeOnLoad', async () => {
-  let sz = mainWindow.getSize();
-  return new Promise((resolve) => {
-    resolve(sz);
-  })
-});
+function getMainWin() {
+  return mainWindow;
+}
 
-ipcMain.handle('populateDD', async () => {
-  const portList = serPort.SerialPort.list();
-  return new Promise((resolve, reject) => {
-    resolve(portList);
-  });
-});
-
-let SPort;
-let parser;
-let baudNum;
-
-ipcMain.on('setPrmsAndConnect', (event, args) => {
-  let port = args[0];
-  let baud = args[1];
-  baudNum = Number(baud);
-  SPort = new SerialPort({ path: port, baudRate: baudNum });
-  parser = new ReadlineParser();
-  SPort.pipe(parser);
-
-  parser.on("data", (line) => {
-    mainWindow.webContents.send('printLn', line);
-  });
-});
-
-ipcMain.on('disconnectPort', () => {
-  SPort.close();
-  SPort = null;
-  parser = null;
-});
-
-ipcMain.on('rtsEvt', (event, args) => {
-  if (SPort == null) return;
-  console.log("RTS", args[0]);
-  SPort.set({rts: args[0]});
-});
-
-ipcMain.on('dtrEvt', (event, args) => {
-  if (SPort == null) return;
-  console.log("DTR", args[0]);
-  SPort.set({dtr: args[0]});
-});
-
-//todo autoresponsus pagal tai ka mato terminale. Cool featuresas
+module.exports = {
+  getMainWin,
+};
