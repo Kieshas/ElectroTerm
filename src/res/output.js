@@ -1,6 +1,16 @@
 const output = document.getElementById('output');
 
-window.ipcbridge.printLn((event, line) => {
-    output.textContent += line;
+const outputLine = (lineCont) => {
+    output.textContent += lineCont;
     output.scrollTop = output.scrollHeight;
-});
+}
+
+window.ipcRender.receive('printLn', (lineCont) => outputLine(lineCont));
+
+// window.ipcRender.receive(('printLn', lineCnt) => {
+
+// });
+
+// window.ipcbridge.printLn((event, line) => {
+    
+// });

@@ -11,8 +11,8 @@ document.querySelectorAll(".dropdown-menu a").forEach( a => { // runs one time a
     })
 });
 
-const GetPopulatedDD = async (portNum) => {
-    const content = await window.ipcbridge.populateDD(portNum);
+const GetPopulatedDD = async () => {
+    const content = await window.ipcRender.invoke('populateDD');
     return content;
 };
 
@@ -29,7 +29,7 @@ portDD.addEventListener('show.bs.dropdown', () => {
             portDDcontent.removeChild(portDDcontent.firstChild);
         }
     }
-    let result = GetPopulatedDD(0);
+    let result = GetPopulatedDD();
 
     result.then ((portContent) => {
         if (portContent == null) {

@@ -83,7 +83,9 @@ let SPort;
 let parser;
 let baudNum;
 
-ipcMain.on('setPrmsAndConnect', (event, port, baud) => {
+ipcMain.on('setPrmsAndConnect', (event, args) => {
+  let port = args[0];
+  let baud = args[1];
   baudNum = Number(baud);
   SPort = new SerialPort({ path: port, baudRate: baudNum });
   parser = new ReadlineParser();
@@ -100,15 +102,16 @@ ipcMain.on('disconnectPort', () => {
   parser = null;
 });
 
-ipcMain.on('rtsEvt', (event, set) => {
+ipcMain.on('rtsEvt', (event, args) => {
   if (SPort == null) return;
-  console.log("RTS", set);
-  SPort.set({rts: set});
+  console.log("RTS", args[0]);
+  SPort.set({rts: args[0]});
 });
 
-ipcMain.on('dtrEvt', (event, set) => {
+ipcMain.on('dtrEvt', (event, args) => {
   if (SPort == null) return;
-  console.log("DTR", set);
-  SPort.set({dtr: set});
+  console.log("DTR", args[0]);
+  SPort.set({dtr: args[0]});
 });
+
 //todo autoresponsus pagal tai ka mato terminale. Cool featuresas

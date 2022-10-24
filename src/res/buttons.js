@@ -21,11 +21,11 @@ connectBtn.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         connectBtn.className = "col btn btn-outline-danger";
         connectBtn.textContent = "Disconnect";
-        window.ipcbridge.setPrmsAndConnect(port, baud);
+        window.ipcRender.send('setPrmsAndConnect', port, baud);
     } else {
         connectBtn.className = "col btn btn-outline-success";
         connectBtn.textContent = "Connect";
-        window.ipcbridge.disconnectPort();
+        window.ipcRender.send('disconnectPort');
     }
 });
 
@@ -36,10 +36,10 @@ rtsBtn.addEventListener('click', () => {
     }
     if (rtsBtn.className == "col btn btn-outline-primary") {
         rtsBtn.className = "col btn btn-primary";
-        window.ipcbridge.rtsEvt(false);
+        window.ipcRender.send('rtsEvt', false);
     } else {
         rtsBtn.className = "col btn btn-outline-primary";
-        window.ipcbridge.rtsEvt(true);
+        window.ipcRender.send('rtsEvt', true);
     }
 });
 
@@ -50,9 +50,9 @@ dtrBtn.addEventListener('click', () => {
     }
     if (dtrBtn.className == "col btn btn-outline-primary") {
         dtrBtn.className = "col btn btn-primary";
-        window.ipcbridge.dtrEvt(false);
+        window.ipcRender.send('dtrEvt', false);
     } else {
         dtrBtn.className = "col btn btn-outline-primary";
-        window.ipcbridge.dtrEvt(true);
+        window.ipcRender.send('dtrEvt', true);
     }
 });
