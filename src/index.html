@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World!</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script defer src="render.js"></script>
+    <style>
+      body {
+        overflow-y: hidden;
+        overflow-x: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="m-1">
+      <div class="container-fluid">
+        <div class="row mb-1">
+          <button class="col  btn btn-outline-secondary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Port
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
+          <button class="col btn btn-outline-secondary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Baud
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="baudDropDown" id="baudDDcontent">
+            <li><a class="dropdown-item" href="#">1200</a></li>
+            <li><a class="dropdown-item" href="#">2400</a></li>
+            <li><a class="dropdown-item" href="#">4800</a></li>
+            <li><a class="dropdown-item" href="#">9600</a></li>
+            <li><a class="dropdown-item" href="#">14400</a></li>
+            <li><a class="dropdown-item" href="#">19200</a></li>
+            <li><a class="dropdown-item" href="#">28800</a></li>
+            <li><a class="dropdown-item" href="#">38400</a></li>
+            <li><a class="dropdown-item" href="#">115200</a></li>
+            <li><a class="dropdown-item" href="#">128000</a></li>
+            <li><a class="dropdown-item" href="#">230400</a></li>
+            <li><a class="dropdown-item" href="#">256000</a></li>
+            <li><a class="dropdown-item" href="#">460800</a></li>
+            <li><a class="dropdown-item" href="#">921600</a></li>
+          </ul>
+          <!-- <button type="button" class="col btn btn-outline-primary" data-bs-toggle="button" autocomplete="off", id="connect">
+            Connect
+          </button> -->
+          <button type="button" class="col btn btn-outline-success" autocomplete="off", id="connect">
+            Connect
+          </button>
+        </div>
+        <div class="row mb-1">
+          <textarea class="form-control" id="output" style="resize: none;"> </textarea>
+        </div>
+        <div class="row mb-1">
+          <button type="button" class="col btn btn-outline-primary" autocomplete="off" id="dtr">
+            DTR
+          </button>
+          <button type="button" class="col btn btn-outline-primary" autocomplete="off" id="rts">
+            RTS
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
