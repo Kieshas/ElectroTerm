@@ -1,6 +1,6 @@
 {
-  "name": "term",
-  "productName": "term",
+  "name": "ElectoTerm",
+  "productName": "ElectoTerm",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "term"
+            "name": "ElectoTerm"
           }
         },
         {
@@ -35,10 +35,6 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
           "config": {}
         }
       ]

@@ -10,7 +10,6 @@ let parser;
 let baudNum;
 
 ipcMain.handle('updateSizeOnLoad', async () => {
-    console.log(mainWindow);
     let sz = mainWindow.getSize();
     return new Promise((resolve) => {
       resolve(sz);

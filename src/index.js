@@ -33,7 +33,7 @@ const createWindow = () => {
   mainWindow.loadFile(ElectronPath.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   handleSize(mainWindow);
   const eventHandler = require('./event-handler');
 };

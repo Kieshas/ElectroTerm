@@ -6,11 +6,3 @@ const outputLine = (lineCont) => {
 }
 
 window.ipcRender.receive('printLn', (lineCont) => outputLine(lineCont));
-
-// window.ipcRender.receive(('printLn', lineCnt) => {
-
-// });
-
-// window.ipcbridge.printLn((event, line) => {
-    
-// });
