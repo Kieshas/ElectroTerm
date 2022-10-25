@@ -1,10 +1,8 @@
 const connectBtn = document.getElementById('connect');
 
-const dtrBtn = document.getElementById('dtr');
-const BSDtrBtn = new bootstrap.Button(dtrBtn);
+const dtrCb = document.getElementById('dtrCb');
 
-const rtsBtn = document.getElementById('rts');
-const BSRtsBtn = new bootstrap.Button(rtsBtn);
+const rtsCb = document.getElementById('rtsCb');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -29,30 +27,20 @@ connectBtn.addEventListener('click', () => {
     }
 });
 
-rtsBtn.addEventListener('click', () => {
+rtsCb.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
+        rtsCb.checked = !rtsCb.checked;
         return;
     }
-    if (rtsBtn.className == "col btn btn-outline-primary") {
-        rtsBtn.className = "col btn btn-primary";
-        window.ipcRender.send('rtsEvt', false);
-    } else {
-        rtsBtn.className = "col btn btn-outline-primary";
-        window.ipcRender.send('rtsEvt', true);
-    }
+    window.ipcRender.send('rtsEvt', !rtsCb.checked);//INVERT
 });
 
-dtrBtn.addEventListener('click', () => {
+dtrCb.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
+        dtrCb.checked = !dtrCb.checked;
         return;
     }
-    if (dtrBtn.className == "col btn btn-outline-primary") {
-        dtrBtn.className = "col btn btn-primary";
-        window.ipcRender.send('dtrEvt', false);
-    } else {
-        dtrBtn.className = "col btn btn-outline-primary";
-        window.ipcRender.send('dtrEvt', true);
-    }
+    window.ipcRender.send('dtrEvt', !dtrCb.checked);//INVERT
 });

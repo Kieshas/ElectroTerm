@@ -12,13 +12,55 @@
     <script defer src="res/dropdowns.js"></script>
     <script defer src="res/output.js"></script>
     <style>
+
+      /* @import "functions";
+      @import "variables";
+      @import "mixins";
+      .dark {
+
+      /* redefine theme colors for dark theme */
+      /* $primary: #012345;
+      $secondary: #111111;
+      $success: #222222;
+      $dark: #000;
+
+      $theme-colors: (
+          "primary": $primary,
+          "secondary": $secondary,
+          "success": $success,
+          "danger": $danger,
+          "info": $indigo,
+          "dark": $dark,
+          "light": $light,
+      ); */
+
+      /* redefine theme color variables */
+      /* @each $color, $value in $theme-colors {
+          --#{$variable-prefix}#{$color}: #{$value};
+      } */
+
+      /* redefine theme color rgb vars (used for bg- colors) */
+      /* $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
+      @each $color, $value in $theme-colors-rgb {
+          --#{$variable-prefix}#{$color}-rgb: #{$value};
+      } */
+
+      /* $body-color: #eeeeee;
+      $body-bg: #263C5C;
+
+      --#{$variable-prefix}body-color: #{$body-color};
+      --#{$variable-prefix}body-bg: #{$body-bg};
+         */
+      /* @import "bootstrap";
+      }  */
+      /* reik SASSO CIA */
       body {
         overflow-y: hidden;
         overflow-x: hidden;
       }
     </style>
   </head>
-  <body>
+  <body class="dark">
     <div class="m-1">
       <div class="container-fluid">
         <div class="row mb-1">
@@ -54,15 +96,24 @@
         </div>
 
         <div class="row mb-1">
-          <button class="col  btn btn-outline-secondary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Port
+          <button class="col  btn btn-outline-primary" type="button" id="clearBtn">
+            Clear
           </button>
-          <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
-          <button class="col btn btn-outline-secondary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Baud
+          <button class="col btn btn-outline-primary" type="button" id="logToFileBtn">
+            Log To File
           </button>
-          <button type="button" class="col btn btn-outline-success" autocomplete="off", id="connect">
-            Connect
+          <button type="button" class="col btn btn-outline-primary" id="openFileBtn">
+            Open File
+          </button>
+          <input type="checkbox" class="btn-check" id="timestampCb" autocomplete="off">
+          <label class="col btn btn-outline-primary" for="timestampCb">PC TS</label>
+          <input type="checkbox" class="btn-check" id="hexCb" autocomplete="off">
+          <label class="col btn btn-outline-primary" for="hexCb">HEX Out</label>
+          <button type="button" class="col btn btn-outline-primary" id="openFiltersBtn">
+            Filters
+          </button>
+          <button type="button" class="col btn btn-outline-primary" id="openAutoRspBtn">
+            Autoresponses
           </button>
         </div>
 
@@ -71,12 +122,12 @@
         </div>
 
         <div class="row mb-1">
-          <button type="button" class="col btn btn-outline-primary" autocomplete="off" id="dtr">
-            DTR
-          </button>
-          <button type="button" class="col btn btn-outline-primary" autocomplete="off" id="rts">
-            RTS
-          </button>
+          <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn">
+          <button class="col-1 btn btn-outline-secondary" type="button" id="sendMsgBtn">Button</button>
+          <input type="checkbox" class="btn-check" id="dtrCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-primary" for="dtrCb">DTR</label>
+          <input type="checkbox" class="btn-check" id="rtsCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-primary" for="rtsCb">RTS</label>
         </div>
 
       </div>
