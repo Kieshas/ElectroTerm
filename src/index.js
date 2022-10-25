@@ -10,7 +10,7 @@ if (require('electron-squirrel-startup')) {
 
 const handleSize = (mainWin) => {
   mainWin.on('resize', () => {
-    size = mainWin.getSize();
+    size = mainWin.getContentSize();
     mainWin.webContents.send('resizeEvt', size);
   });
 }
