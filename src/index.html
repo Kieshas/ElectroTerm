@@ -52,9 +52,24 @@
             Connect
           </button>
         </div>
+
+        <div class="row mb-1">
+          <button class="col  btn btn-outline-secondary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Port
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
+          <button class="col btn btn-outline-secondary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Baud
+          </button>
+          <button type="button" class="col btn btn-outline-success" autocomplete="off", id="connect">
+            Connect
+          </button>
+        </div>
+
         <div class="row mb-1">
           <textarea class="form-control" id="output" style="resize: none;"> </textarea>
         </div>
+
         <div class="row mb-1">
           <button type="button" class="col btn btn-outline-primary" autocomplete="off" id="dtr">
             DTR
@@ -63,6 +78,7 @@
             RTS
           </button>
         </div>
+
       </div>
     </div>
   </body>

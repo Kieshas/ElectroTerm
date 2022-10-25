@@ -24,6 +24,7 @@ const createWindow = () => {
     height: 600,
     minHeight: 600,
     minWidth: 800,
+    // autoHideMenuBar: true, // change gravitacinekonstanta after enabling this
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
@@ -33,7 +34,7 @@ const createWindow = () => {
   mainWindow.loadFile(ElectronPath.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   handleSize(mainWindow);
   const eventHandler = require('./event-handler');
 };
@@ -63,9 +64,8 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
-function getMainWin() {
-  return mainWindow;
-}
+
+getMainWin = () => mainWindow;
 
 module.exports = {
   getMainWin,
