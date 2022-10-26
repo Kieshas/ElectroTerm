@@ -4,10 +4,17 @@ const portDDcontent = document.getElementById('portDDcontent');
 let port = null;
 let baud = null;
 
-document.querySelectorAll(".dropdown-menu a").forEach( a => { // runs one time at startup
+document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
         baud = a.text;
         document.getElementById('baudDropDown').textContent = baud;
+    })
+});
+
+document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
+    a.addEventListener("click", () => {
+        document.getElementById('fontDropDown').textContent = "Font: " + a.text;
+        document.getElementById('output').style.fontSize = a.text;
     })
 });
 

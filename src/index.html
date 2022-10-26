@@ -2,8 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
+    <title>ElectroTerm</title>
     <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap-nightfall.min.css" id="darkModeCss">
     <script src="../js/bootstrap.bundle.min.js"></script>
     <script defer src="res/render.js"></script>
     <script defer src="res/popup.js"></script>
@@ -11,67 +12,26 @@
     <script defer src="res/resizer.js"></script>
     <script defer src="res/dropdowns.js"></script>
     <script defer src="res/output.js"></script>
+    <script defer src="res/checkbox.js"></script>
     <style>
-
-      /* @import "functions";
-      @import "variables";
-      @import "mixins";
-      .dark {
-
-      /* redefine theme colors for dark theme */
-      /* $primary: #012345;
-      $secondary: #111111;
-      $success: #222222;
-      $dark: #000;
-
-      $theme-colors: (
-          "primary": $primary,
-          "secondary": $secondary,
-          "success": $success,
-          "danger": $danger,
-          "info": $indigo,
-          "dark": $dark,
-          "light": $light,
-      ); */
-
-      /* redefine theme color variables */
-      /* @each $color, $value in $theme-colors {
-          --#{$variable-prefix}#{$color}: #{$value};
-      } */
-
-      /* redefine theme color rgb vars (used for bg- colors) */
-      /* $theme-colors-rgb: map-loop($theme-colors, to-rgb, "$value");
-      @each $color, $value in $theme-colors-rgb {
-          --#{$variable-prefix}#{$color}-rgb: #{$value};
-      } */
-
-      /* $body-color: #eeeeee;
-      $body-bg: #263C5C;
-
-      --#{$variable-prefix}body-color: #{$body-color};
-      --#{$variable-prefix}body-bg: #{$body-bg};
-         */
-      /* @import "bootstrap";
-      }  */
-      /* reik SASSO CIA */
       body {
         overflow-y: hidden;
         overflow-x: hidden;
       }
     </style>
   </head>
-  <body class="dark">
+  <body>
     <div class="m-1">
       <div class="container-fluid">
         <div class="row mb-1">
-          <button class="col  btn btn-outline-secondary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Port
           </button>
           <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
-          <button class="col btn btn-outline-secondary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Baud
           </button>
-          <ul class="dropdown-menu" aria-labelledby="baudDropDown" id="baudDDcontent">
+          <ul class="dropdown-menu baud" aria-labelledby="baudDropDown" id="baudDDcontent">
             <li><a class="dropdown-item" href="#">1200</a></li>
             <li><a class="dropdown-item" href="#">2400</a></li>
             <li><a class="dropdown-item" href="#">4800</a></li>
@@ -87,9 +47,31 @@
             <li><a class="dropdown-item" href="#">460800</a></li>
             <li><a class="dropdown-item" href="#">921600</a></li>
           </ul>
-          <!-- <button type="button" class="col btn btn-outline-primary" data-bs-toggle="button" autocomplete="off", id="connect">
-            Connect
-          </button> -->
+          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="fontDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Font: 16px
+          </button>
+          <ul class="dropdown-menu font" aria-labelledby="fontDropDown" id="fontDDcontent">
+            <li><a class="dropdown-item" href="#">12px</a></li>
+            <li><a class="dropdown-item" href="#">13px</a></li>
+            <li><a class="dropdown-item" href="#">14px</a></li>
+            <li><a class="dropdown-item" href="#">15px</a></li>
+            <li><a class="dropdown-item" href="#">16px</a></li>
+            <li><a class="dropdown-item" href="#">17px</a></li>
+            <li><a class="dropdown-item" href="#">18px</a></li>
+            <li><a class="dropdown-item" href="#">19px</a></li>
+            <li><a class="dropdown-item" href="#">20px</a></li>
+            <li><a class="dropdown-item" href="#">22px</a></li>
+            <li><a class="dropdown-item" href="#">26px</a></li>
+          </ul>
+          <input type="checkbox" class="btn-check" id="timestampCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-dark darkBtn" for="timestampCb">TS</label>
+
+          <input type="checkbox" class="btn-check" id="hexCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-dark darkBtn" for="hexCb">HEX</label>
+
+          <input type="checkbox" class="btn-check" id="lockCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-dark darkBtn" for="lockCb"> <img id="lockedStat" src="res/resources/locked.png" alt="lockedCb" width="20" height="25"> </label>
+          
           <button type="button" class="col btn btn-outline-success" autocomplete="off", id="connect">
             Connect
           </button>
@@ -105,25 +87,60 @@
           <button type="button" class="col btn btn-outline-primary" id="openFileBtn">
             Open File
           </button>
-          <input type="checkbox" class="btn-check" id="timestampCb" autocomplete="off">
-          <label class="col btn btn-outline-primary" for="timestampCb">PC TS</label>
-          <input type="checkbox" class="btn-check" id="hexCb" autocomplete="off">
-          <label class="col btn btn-outline-primary" for="hexCb">HEX Out</label>
           <button type="button" class="col btn btn-outline-primary" id="openFiltersBtn">
             Filters
           </button>
           <button type="button" class="col btn btn-outline-primary" id="openAutoRspBtn">
             Autoresponses
           </button>
+          <input type="checkbox" class="btn-check" id="darkModeCb" autocomplete="off">
+          <label class="col-1 btn btn-outline-dark darkBtn" for="darkModeCb">DM</label>
         </div>
 
         <div class="row mb-1">
-          <textarea class="form-control" id="output" style="resize: none;"> </textarea>
+          <textarea class="col form-control" id="output" style="resize: none;"> </textarea>
+          <textarea class="col form-control" id="outputFiltered" style="resize: none;"> </textarea>
+        </div>
+
+        <div class="row mb-1">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro1">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro2">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro3">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro4">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro5">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro6">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro7">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro8">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro9">
+            -
+          </button>
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="macro10">
+            -
+          </button>
+
+          <input type="checkbox" class="btn-check" id="editModeCb" autocomplete="off">
+          <label class="col-2 btn btn-outline-primary" for="editModeCb">Edit</label>
         </div>
 
         <div class="row mb-1">
           <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn">
-          <button class="col-1 btn btn-outline-secondary" type="button" id="sendMsgBtn">Button</button>
+          <button class="col-1 btn btn-outline-dark darkBtn" type="button" id="sendMsgBtn">Send</button>
           <input type="checkbox" class="btn-check" id="dtrCb" autocomplete="off">
           <label class="col-1 btn btn-outline-primary" for="dtrCb">DTR</label>
           <input type="checkbox" class="btn-check" id="rtsCb" autocomplete="off">

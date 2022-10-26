@@ -1,8 +1,5 @@
 const connectBtn = document.getElementById('connect');
-
-const dtrCb = document.getElementById('dtrCb');
-
-const rtsCb = document.getElementById('rtsCb');
+const clearBtn = document.getElementById('clearBtn');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -27,20 +24,6 @@ connectBtn.addEventListener('click', () => {
     }
 });
 
-rtsCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
-        showPopup("Communication Error", "Not connected");
-        rtsCb.checked = !rtsCb.checked;
-        return;
-    }
-    window.ipcRender.send('rtsEvt', !rtsCb.checked);//INVERT
-});
-
-dtrCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
-        showPopup("Communication Error", "Not connected");
-        dtrCb.checked = !dtrCb.checked;
-        return;
-    }
-    window.ipcRender.send('dtrEvt', !dtrCb.checked);//INVERT
+clearBtn.addEventListener('click', () => {
+    ClearOutputs();
 });

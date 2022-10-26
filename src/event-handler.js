@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
 const serPort = require('serialport');
 const { SerialPort, ReadlineParser } = require('serialport');
-const mainWin = require('./index'); // asynco kazkokios reikia bbz
+const mainWin = require('./index');
 
 const mainWindow = mainWin.getMainWin();
 
