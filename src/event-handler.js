@@ -30,10 +30,8 @@ ipcMain.on('setPrmsAndConnect', (event, args) => { // check promise if COM acces
     SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
     parser = new ReadlineParser();
     SPort.pipe(parser);
-    // SPort.resume();
 
     parser.on("data", (line) => {
-        // SPort.resume();
         mainWindow.webContents.send('printLn', line);
     });
 });
