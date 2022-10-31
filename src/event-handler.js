@@ -43,7 +43,7 @@ ipcMain.on('disconnectPort', () => {
 });
 
 const restart = () => {
-    SPort.close(() => { // call close and after it is closed - reconnect which will result in a restart if RTS is pulled low
+    SPort.close(() => { // call close and after it is closed - reconnect which will result in a restart if RTS is pulled low //
         SPort = null;
         parser = null;
         SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
