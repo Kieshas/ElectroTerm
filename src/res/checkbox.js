@@ -1,27 +1,7 @@
-const dtrCb = document.getElementById('dtrCb');
-const rtsCb = document.getElementById('rtsCb');
 const lockCb = document.getElementById('lockCb');
 const tsCb = document.getElementById('timestampCb');
 const hexCb = document.getElementById('hexCb');
 const darkModeCb = document.getElementById('darkModeCb');
-
-rtsCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
-        showPopup("Communication Error", "Not connected");
-        rtsCb.checked = !rtsCb.checked;
-        return;
-    }
-    window.ipcRender.send('rtsEvt', !rtsCb.checked);//INVERT
-});
-
-dtrCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
-        showPopup("Communication Error", "Not connected");
-        dtrCb.checked = !dtrCb.checked;
-        return;
-    }
-    window.ipcRender.send('dtrEvt', !dtrCb.checked);//INVERT
-});
 
 lockCb.addEventListener('click', () => {
     if (lockCb.checked) {

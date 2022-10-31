@@ -8,6 +8,7 @@ const mainWindow = mainWin.getMainWin();
 let SPort;
 let parser;
 let baudNum;
+let currPort;
 
 ipcMain.handle('updateSizeOnLoad', async () => {
     let sz = mainWindow.getContentSize();
@@ -24,14 +25,15 @@ ipcMain.handle('populateDD', async () => {
 });
 
 ipcMain.on('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
-    let port = args[0];
-    let baud = args[1];
-    baudNum = Number(baud);
-    SPort = new SerialPort({ path: port, baudRate: baudNum });
+    currPort = args[0];
+    baudNum = Number(args[1]);
+    SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
     parser = new ReadlineParser();
     SPort.pipe(parser);
+    // SPort.resume();
 
     parser.on("data", (line) => {
+        // SPort.resume();
         mainWindow.webContents.send('printLn', line);
     });
 });
@@ -42,16 +44,24 @@ ipcMain.on('disconnectPort', () => {
     parser = null;
 });
 
-ipcMain.on('rtsEvt', (event, args) => {
-    if (SPort == null) return;
-    console.log("RTS", args[0]);
-    SPort.set({rts: args[0]});
-});
+const restart = () => {
+    SPort.close(() => { // call close and after it is closed - reconnect which will result in a restart if RTS is pulled low
+        SPort = null;
+        parser = null;
+        SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
+        parser = new ReadlineParser();
+        SPort.pipe(parser);
+        
+    
+        parser.on("data", (line) => {
+            mainWindow.webContents.send('printLn', line);
+        });
+    });
+}
 
-ipcMain.on('dtrEvt', (event, args) => {
+ipcMain.on('restartEvt', async (event, args) => {
     if (SPort == null) return;
-    console.log("DTR", args[0]);
-    SPort.set({dtr: args[0]});
+    SPort.set({rts: args[0]}, restart); // true for ESP false for STM
 });
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas

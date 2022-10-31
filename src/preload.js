@@ -27,8 +27,7 @@ const ipc = {
         'send': [
             'setPrmsAndConnect',
             'disconnectPort',
-            'dtrEvt',
-            'rtsEvt',
+            'restartEvt',
         ],
         // From main to render.
         'receive': [

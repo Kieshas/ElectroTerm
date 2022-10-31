@@ -3,6 +3,7 @@ const portDDcontent = document.getElementById('portDDcontent');
 
 let port = null;
 let baud = null;
+let platform = null;
 
 document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
@@ -16,6 +17,13 @@ document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
         document.getElementById('fontDropDown').textContent = "Font: " + a.text;
         document.getElementById('output').style.fontSize = a.text;
     })
+});
+
+document.querySelectorAll(".platform a").forEach( a => {
+    a.addEventListener("click", () => {
+        document.getElementById('platformDropDown').textContent = a.text;
+        platform = a.text;
+    });
 });
 
 const GetPopulatedDD = async () => {
