@@ -66,7 +66,9 @@ app.on('activate', () => {
 
 
 getMainWin = () => mainWindow;
+getPath = (name) => app.getPath(name);
 
 module.exports = {
   getMainWin,
+  getPath,
 };

@@ -1,6 +1,7 @@
 const connectBtn = document.getElementById('connect');
 const clearBtn = document.getElementById('clearBtn');
 const restartBtn = document.getElementById('restartBtn');
+const logToFileBtn = document.getElementById('logToFileBtn');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -52,4 +53,16 @@ restartBtn.addEventListener('click', () => {
         rtsState = true;
     }
     window.ipcRender.send('restartEvt', rtsState);
+});
+
+logToFileBtn.addEventListener('click', () => {
+    window.ipcRender.invoke('selectFile').then((mesg) => {
+        if (mesg == true) {
+            logToFileBtn.textContent = 'Stop logging';
+            logToFileBtn.className = 'col btn btn-outline-danger';
+        } else {
+            logToFileBtn.textContent = 'Log To File';
+            logToFileBtn.className = 'col btn btn-outline-primary';
+        }
+    });
 });

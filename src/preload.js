@@ -20,6 +20,7 @@ const ipc = {
             'populateDD',
             'updateSizeOnLoad',
             'setPrmsAndConnect',
+            'selectFile',
         ]
     }
 };
