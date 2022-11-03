@@ -1,21 +1,3 @@
-// const { contextBridge, ipcRenderer } = require('electron');
-
-// const Stuff = {
-//     populateDD: () => ipcRenderer.invoke('populateDD'),
-//     setPrmsAndConnect: (port, baud) => ipcRenderer.send('setPrmsAndConnect', port, baud),
-//     disconnectPort: () => ipcRenderer.send('disconnectPort'),
-//     dtrEvt: (set) => ipcRenderer.send('dtrEvt', set),
-//     rtsEvt: (set) => ipcRenderer.send('rtsEvt', set),
-//     resizeStuff: (size) => ipcRenderer.on('resizeEvt', size),
-//     updateSizeOnLoad: () => ipcRenderer.invoke('updateSizeOnLoad'),
-//     printLn: (lineContent) => ipcRenderer.on('printLn', lineContent),
-
-
-
-// }
-
-// contextBridge.exposeInMainWorld('ipcbridge', Stuff);
-
 // Import the necessary Electron components.
 const contextBridge = require('electron').contextBridge;
 const ipcRenderer = require('electron').ipcRenderer;
@@ -25,7 +7,6 @@ const ipc = {
     'render': {
         // From render to main.
         'send': [
-            'setPrmsAndConnect',
             'disconnectPort',
             'restartEvt',
         ],
@@ -38,6 +19,7 @@ const ipc = {
         'sendReceive': [
             'populateDD',
             'updateSizeOnLoad',
+            'setPrmsAndConnect',
         ]
     }
 };
@@ -62,7 +44,7 @@ contextBridge.exposeInMainWorld(
             }
         },
         // From render to main and back again.
-        invoke: (channel, args) => {
+        invoke: (channel, ...args) => {
             let validChannels = ipc.render.sendReceive;
             if (validChannels.includes(channel)) {
                 return ipcRenderer.invoke(channel, args);

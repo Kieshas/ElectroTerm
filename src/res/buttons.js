@@ -15,9 +15,15 @@ connectBtn.addEventListener('click', () => {
     }
 
     if (connectBtn.className == "col btn btn-outline-success") {
-        connectBtn.className = "col btn btn-outline-danger";
-        connectBtn.textContent = "Disconnect";
-        window.ipcRender.send('setPrmsAndConnect', port, baud);
+        window.ipcRender.invoke('setPrmsAndConnect', port, baud).then(() => {
+            connectBtn.className = "col btn btn-outline-danger";
+            connectBtn.textContent = "Disconnect";
+        }).catch((err) => {
+            err = err.toString();
+            const unNeededStr = "'setPrmsAndConnect':";
+            showPopup("Communication error", err.substr(err.indexOf(unNeededStr) + unNeededStr.length));
+        });
+
     } else {
         connectBtn.className = "col btn btn-outline-success";
         connectBtn.textContent = "Connect";

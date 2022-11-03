@@ -24,40 +24,59 @@ ipcMain.handle('populateDD', async () => {
     });
 });
 
-ipcMain.on('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
-    currPort = args[0];
-    baudNum = Number(args[1]);
-    SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
-    parser = new ReadlineParser();
-    SPort.pipe(parser);
-
-    parser.on("data", (line) => {
-        mainWindow.webContents.send('printLn', line);
-    });
-});
-
-ipcMain.on('disconnectPort', () => {
-    SPort.close();
-    SPort = null;
-    parser = null;
-});
-
-const restart = () => {
-    SPort.close(() => { // call close and after it is closed - reconnect which will result in a restart if RTS is pulled low
-        SPort = null;
-        parser = null;
-        SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false});
+const openPort = () => {
+    return new Promise((resolve, reject) => { 
+        SPort = new SerialPort({ path: currPort, baudRate: baudNum, hupcl: false, autoOpen: false});
         parser = new ReadlineParser();
         SPort.pipe(parser);
-        
-    
+
         parser.on("data", (line) => {
             mainWindow.webContents.send('printLn', line);
+        });
+        SPort.open((err) => {
+            if (err == null) {
+                resolve();
+            } else {
+                reject(err);
+            }
         });
     });
 }
 
-ipcMain.on('restartEvt', async (event, args) => {
+const cleanUpPort = () => {
+    SPort = null;
+    parser = null;
+}
+
+ipcMain.handle('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
+    currPort = args[0];
+    baudNum = Number(args[1]);
+    const retVal = openPort();
+
+    return new Promise((resolve, reject) => {
+        retVal.then(() => {
+            resolve();
+        }).catch((err) => {
+            cleanUpPort();
+            reject(err);
+        })
+    })    
+});
+
+ipcMain.on('disconnectPort', () => {
+    SPort.close();
+    cleanUpPort();
+});
+
+const restart = () => {
+    SPort.close(() => {
+        SPort = null;
+        parser = null;
+        openPort();
+    });
+}
+
+ipcMain.on('restartEvt', (event, args) => {
     if (SPort == null) return;
     SPort.set({rts: args[0]}, restart); // true for ESP false for STM
 });
