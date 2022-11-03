@@ -9,6 +9,9 @@ const ipc = {
         'send': [
             'disconnectPort',
             'restartEvt',
+            'timeStamp',
+            'openFile',
+            'hexCheck',
         ],
         // From main to render.
         'receive': [

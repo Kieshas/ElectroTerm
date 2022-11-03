@@ -11,6 +11,22 @@ lockCb.addEventListener('click', () => {
     }
 });
 
+tsCb.addEventListener('click', () => {
+    if (tsCb.checked) {
+        window.ipcRender.send('timeStamp', true);
+    } else {
+        window.ipcRender.send('timeStamp', false);
+    }
+});
+
+hexCb.addEventListener('click', () => {
+    if (hexCb.checked) {
+        window.ipcRender.send('hexCheck', true);
+    } else {
+        window.ipcRender.send('hexCheck', false);
+    }
+})
+
 darkModeCb.addEventListener('click', () => {
     if (darkModeCb.checked) {
         document.querySelectorAll(".darkBtn").forEach( element => {

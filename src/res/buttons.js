@@ -2,6 +2,7 @@ const connectBtn = document.getElementById('connect');
 const clearBtn = document.getElementById('clearBtn');
 const restartBtn = document.getElementById('restartBtn');
 const logToFileBtn = document.getElementById('logToFileBtn');
+const openFileBtn = document.getElementById('openFileBtn');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -66,3 +67,11 @@ logToFileBtn.addEventListener('click', () => {
         }
     });
 });
+
+openFileBtn.addEventListener('click', () => {
+    if (logToFileBtn.className == 'col btn btn-outline-primary') {
+        showPopup("Selection error", "Logging is not in progress");
+        return;
+    }
+    window.ipcRender.send('openFile');
+})

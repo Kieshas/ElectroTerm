@@ -1,7 +1,7 @@
-const { ipcMain } = require('electron');
+const { ipcMain, shell } = require('electron');
 const serPort = require('serialport');
 const { SerialPort, ReadlineParser } = require('serialport');
-const { userSelectFolder, userSaveFile } = require('./dialogWindow');
+const { userSaveFile } = require('./dialogWindow');
 const mainWin = require('./index');
 const fileSystem = require('fs');
 
@@ -68,6 +68,8 @@ const fileHandler = {
     currFileName: "",
     currFileLoc: mainWin.getPath('documents'),
     currFullPath: "",
+    timeStamp: false,
+    hexOutput: false,
 
     set setLogToFile(newState) {
         this.logToFile = newState;
@@ -80,9 +82,15 @@ const fileHandler = {
         strIdx = path.lastIndexOf('\\');
         this.currFileLoc = path.slice(0, strIdx);
     },
+    set setTSFlag(newVal) {
+        this.timeStamp = newVal;
+    },
+    set setHexFlag(newVal) {
+        this.hexOutput = newVal;
+    },
 
     get getDefFileName() {
-        this.currFileName = "log" + this.getCurrDate() + ".txt";
+        this.currFileName = "log" + this.getCurrDate('file') + ".txt";
         return this.currFileName;
     },
     get getLogToFile() {
@@ -97,19 +105,36 @@ const fileHandler = {
     },
     printLineToFile(line) {
         if (this.logToFile == true) {
+            if (this.timeStamp == true) line = this.getCurrDate('log') + line;
+            if (this.hexOutput == true) line = this.asciiToHex(line).toUpperCase();
             fileSystem.appendFileSync(this.currFullPath, line, 'utf-8');
         }
     },
     restoreCurrFileLoc() {
         this.currFileLoc = mainWin.getPath('documents');
+        this.currFileName = "";
+        this.currFullPath = "";
     },
-    getCurrDate() {
+    getCurrDate(format) {
         const currDate = new Date();
         let correctCurDate;
-        correctCurDate = currDate.toJSON().slice(0, 10) + '_';
-        correctCurDate += currDate.toJSON().slice(11, 19);
-        correctCurDate = correctCurDate.replaceAll(':', '꞉');        
+        if (format == 'file') {
+            correctCurDate = currDate.toJSON().slice(0, 10) + '_';
+            correctCurDate += currDate.toJSON().slice(11, 19);
+            correctCurDate = correctCurDate.replaceAll(':', '꞉');    
+        } else if (format == 'log') {
+            correctCurDate = currDate.toJSON().slice(0, 10) + " ";
+            correctCurDate += currDate.toJSON().slice(11, 23) + " ";
+        }
         return correctCurDate;
+    },
+    asciiToHex(str) { // needs some more attention. Kid of works and not in need of immediate attention
+        let arr1 = [];
+        for (let n = 0, l = str.length; n < l; n ++) {
+            let hex = Number(str.charCodeAt(n)).toString(16);
+            arr1.push(hex);
+        }
+        return arr1.join('') + "   ";
     },
 }
 
@@ -148,6 +173,18 @@ ipcMain.handle('updateSizeOnLoad', async () => {
     return new Promise((resolve) => {
       resolve(sz);
     })
+});
+
+ipcMain.on('timeStamp', (event, args) => {
+    fileHandler.setTSFlag = args[0];
+});
+
+ipcMain.on('hexCheck', (event, args) => {
+    fileHandler.setHexFlag = args[0];
+})
+
+ipcMain.on('openFile', () => {
+    shell.openPath(fileHandler.currFullPath);
 });
 
 ipcMain.handle('selectFile', () => {
