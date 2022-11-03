@@ -82,6 +82,6 @@ sendMsgBtn.addEventListener('click', () => {
         showPopup("Communication Error", "Not connected");
         return;
     }
-    console.log(document.getElementById('sendMsgText').value);
     window.ipcRender.send('sendMsg', document.getElementById('sendMsgText').value);
+    outputLine(document.getElementById('sendMsgText').value + '\r\n');
 })

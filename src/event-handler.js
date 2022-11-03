@@ -62,11 +62,7 @@ const portHandler = {
         });
     },
     sendMsg(msg) {
-        console.log(msg);
-        this.SPort.write((msg + '\r\n'), (err, result) => {
-            console.log(err);
-            console.log(result);
-        });
+        this.SPort.write((msg + '\r\n'));
     }
 };
 
