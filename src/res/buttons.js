@@ -3,6 +3,7 @@ const clearBtn = document.getElementById('clearBtn');
 const restartBtn = document.getElementById('restartBtn');
 const logToFileBtn = document.getElementById('logToFileBtn');
 const openFileBtn = document.getElementById('openFileBtn');
+const sendMsgBtn = document.getElementById('sendMsgBtn');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -74,4 +75,13 @@ openFileBtn.addEventListener('click', () => {
         return;
     }
     window.ipcRender.send('openFile');
+})
+
+sendMsgBtn.addEventListener('click', () => {
+    if (connectBtn.className == "col btn btn-outline-success") {
+        showPopup("Communication Error", "Not connected");
+        return;
+    }
+    console.log(document.getElementById('sendMsgText').value);
+    window.ipcRender.send('sendMsg', document.getElementById('sendMsgText').value);
 })

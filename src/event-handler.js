@@ -61,7 +61,56 @@ const portHandler = {
             this.cleanUp();
         });
     },
+    sendMsg(msg) {
+        console.log(msg);
+        this.SPort.write((msg + '\r\n'), (err, result) => {
+            console.log(err);
+            console.log(result);
+        });
+    }
 };
+
+ipcMain.handle('populateDD', () => {
+    const portList = serPort.SerialPort.list();
+    return new Promise((resolve) => {
+        resolve(portList);
+    });
+});
+
+ipcMain.handle('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
+    portHandler.changePort = args[0];
+    portHandler.changeBaud = Number(args[1]);
+    const retVal = portHandler.open();
+
+    return new Promise((resolve, reject) => {
+        retVal.then(() => {
+            resolve();
+        }).catch((err) => {
+            portHandler.cleanUp();
+            reject(err);
+        })
+    })    
+});
+
+ipcMain.on('sendMsg', (event, args) => {
+    portHandler.sendMsg(args[0]);
+});
+
+ipcMain.on('disconnectPort', () => {
+    portHandler.close();
+});
+
+ipcMain.on('restartEvt', (event, args) => {
+    portHandler.restart(args);
+});
+
+ipcMain.handle('updateSizeOnLoad', async () => {
+    let sz = mainWindow.getContentSize();
+    return new Promise((resolve) => {
+      resolve(sz);
+    })
+});
+
 
 const fileHandler = {
     logToFile: false,
@@ -137,43 +186,6 @@ const fileHandler = {
         return arr1.join('') + "   ";
     },
 }
-
-ipcMain.handle('populateDD', () => {
-    const portList = serPort.SerialPort.list();
-    return new Promise((resolve) => {
-        resolve(portList);
-    });
-});
-
-ipcMain.handle('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
-    portHandler.changePort = args[0];
-    portHandler.changeBaud = Number(args[1]);
-    const retVal = portHandler.open();
-
-    return new Promise((resolve, reject) => {
-        retVal.then(() => {
-            resolve();
-        }).catch((err) => {
-            portHandler.cleanUp();
-            reject(err);
-        })
-    })    
-});
-
-ipcMain.on('disconnectPort', () => {
-    portHandler.close();
-});
-
-ipcMain.on('restartEvt', (event, args) => {
-    portHandler.restart(args);
-});
-
-ipcMain.handle('updateSizeOnLoad', async () => {
-    let sz = mainWindow.getContentSize();
-    return new Promise((resolve) => {
-      resolve(sz);
-    })
-});
 
 ipcMain.on('timeStamp', (event, args) => {
     fileHandler.setTSFlag = args[0];

@@ -12,6 +12,7 @@ const ipc = {
             'timeStamp',
             'openFile',
             'hexCheck',
+            'sendMsg',
         ],
         // From main to render.
         'receive': [
