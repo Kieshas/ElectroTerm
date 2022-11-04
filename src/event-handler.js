@@ -73,7 +73,7 @@ ipcMain.handle('populateDD', () => {
     });
 });
 
-ipcMain.handle('setPrmsAndConnect', (event, args) => { // check promise if COM access denied
+ipcMain.handle('setPrmsAndConnect', (event, args) => {
     portHandler.changePort = args[0];
     portHandler.changeBaud = Number(args[1]);
     const retVal = portHandler.open();
@@ -150,7 +150,7 @@ const fileHandler = {
     },
     printLineToFile(line) {
         if (this.logToFile == true) {
-            if (this.timeStamp == true) line = this.getCurrDate('log') + line;
+            if (this.timeStamp == true) line = this.getCurrDate('log') + line; //TODO: probably this should be used instead of one in frontend process and one in backend
             if (this.hexOutput == true) line = this.asciiToHex(line).toUpperCase();
             fileSystem.appendFileSync(this.currFullPath, line, 'utf-8');
         }

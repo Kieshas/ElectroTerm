@@ -34,12 +34,14 @@ darkModeCb.addEventListener('click', () => {
             element.classList.remove("btn-outline-dark");
             element.classList.add("btn-outline-secondary");
         });
+        document.getElementById('darkModeStat').src="res/resources/whiteShquare.png"
         parent.appendChild(DMcss);
     } else {
         document.querySelectorAll(".darkBtn").forEach( element => {
             element.classList.remove("btn-outline-secondary");
             element.classList.add("btn-outline-dark");
         });
+        document.getElementById('darkModeStat').src="res/resources/darkShquare.png"
         parent.removeChild(DMcss);
     }
 });
