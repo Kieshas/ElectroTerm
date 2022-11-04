@@ -77,11 +77,37 @@ openFileBtn.addEventListener('click', () => {
     window.ipcRender.send('openFile');
 })
 
+const sendMsg = (msg) => {
+    window.ipcRender.send('sendMsg', msg);
+    outputLine(msg + '\r\n');
+}
+
 sendMsgBtn.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
         return;
     }
-    window.ipcRender.send('sendMsg', document.getElementById('sendMsgText').value);
-    outputLine(document.getElementById('sendMsgText').value + '\r\n');
+    sendMsg(document.getElementById('sendMsgText').value);
 })
+
+let macroCnt = 0;
+document.querySelectorAll(".macroBtn").forEach( (btn) => {
+    macroCnt++;
+    btn.textContent = "-";
+    btn.addEventListener('click', () => {
+        if (editModeCb.checked) {
+            promiseToWait = showInputPopup(btn.id, "Macro name (max 7 characters)", btn.textContent, "Message to be sent", macroBtnVal[(Number(btn.id.slice(6)) - 1)]);
+            promiseToWait.then((input) => {
+                btn.textContent = input[0];
+                macroBtnVal[(Number(btn.id.slice(6)) - 1)] = input[1]; //subtract length of "Macro-" from the start - 1 since macro id's start from 1
+            })
+        } else {
+            if (connectBtn.className == "col btn btn-outline-success") {
+                showPopup("Communication Error", "Not connected");
+                return;
+            }
+            sendMsg(macroBtnVal[(Number(btn.id.slice(6)) - 1)]); //subtract length of "Macro-" from the start - 1 since macro id's start from 1
+        }
+    });
+});
+let macroBtnVal = new Array(macroCnt);

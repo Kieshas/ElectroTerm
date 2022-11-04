@@ -217,3 +217,4 @@ ipcMain.handle('selectFile', () => {
 })
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
+  // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

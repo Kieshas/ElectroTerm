@@ -2,6 +2,7 @@ const lockCb = document.getElementById('lockCb');
 const tsCb = document.getElementById('timestampCb');
 const hexCb = document.getElementById('hexCb');
 const darkModeCb = document.getElementById('darkModeCb');
+const editModeCb = document.getElementById('editModeCb');
 
 lockCb.addEventListener('click', () => {
     if (lockCb.checked) {
