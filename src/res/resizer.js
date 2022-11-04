@@ -18,7 +18,10 @@ const resizeOutput = (size) => {
     height = 0;
 } 
 
-window.ipcRender.receive('resizeEvt', (args) => { resizeOutput(args) });
+window.ipcRender.receive('resizeEvt', (args) => { 
+    resizeOutput(args); 
+    setTimeout(resizeOutput(args), 100); // double down for more smoothness
+});
 
 const updtSzOnLoad = async () => {
     const size = await window.ipcRender.invoke('updateSizeOnLoad');
