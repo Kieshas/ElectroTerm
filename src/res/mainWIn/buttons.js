@@ -4,6 +4,7 @@ const restartBtn = document.getElementById('restartBtn');
 const logToFileBtn = document.getElementById('logToFileBtn');
 const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
+const openFiltersBtn = document.getElementById('openFiltersBtn');
 
 connectBtn.addEventListener('click', () => {
     if (baud == null && port == null) {
@@ -91,7 +92,7 @@ sendMsgBtn.addEventListener('click', () => {
 })
 
 let macroCnt = 0;
-document.querySelectorAll(".macroBtn").forEach( (btn) => {
+document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena eilute su 10 macrosu presetu, kurie switchina. Isviso 100tukas kad butu
     macroCnt++;
     btn.textContent = "-";
     btn.addEventListener('click', () => {
@@ -111,3 +112,7 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => {
     });
 });
 let macroBtnVal = new Array(macroCnt);
+
+openFiltersBtn.addEventListener('click', () => {
+    window.ipcRender.send('openFilters', darkModeCb.checked);
+});

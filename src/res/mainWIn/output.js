@@ -39,7 +39,7 @@ const outputLine = (line) => {
             output.textContent += getCurrDate();
         }
         output.textContent += line;
-    }
+    } // can be used output.append() which arguably is better than current approach
 
     if (!lockCb.checked) {
         output.scrollTop = output.scrollHeight;
