@@ -214,7 +214,28 @@ ipcMain.handle('selectFile', () => {
             resolve(false);
         })
     });
-})
+});
+
+let filterWin;
+
+ipcMain.on('openFilters', (event, args) => {
+    // mainWindow.setSize(200, 400);
+    // mainWindow.setMinimumSize(200, 400); // in dire need of normal resizing in future
+    filterWin = mainWin.createFilterWindow();
+    mainWindow.setMovable(false);
+    mainWindow.setMinimizable(false);
+    ipcMain.handle('filtersLoaded', () => {
+        return new Promise((resolve) => {
+            resolve(args[0]);
+        })
+    });
+    filterWin.on('closed', () => {
+        ipcMain.removeHandler('filtersLoaded');
+        mainWindow.setMovable(true);
+        mainWindow.setMinimizable(true);
+        filterWin = null;
+    }); // sukurt klase, kuri kursis vis nauja i lista kai pasispaus pliusas ir ez pz
+});
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

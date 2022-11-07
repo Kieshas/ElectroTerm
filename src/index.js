@@ -24,7 +24,7 @@ const createWindow = () => {
     height: 600,
     minHeight: 600,
     minWidth: 800,
-    // autoHideMenuBar: true, // change gravitacinekonstanta after enabling this
+    // autoHideMenuBar: true,
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
@@ -64,6 +64,26 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+const createFilterWindow = () => {
+  // Create the browser window.
+  const filterWindow = new BrowserWindow({
+    width: 400,
+    height: 400,
+    minHeight: 400,
+    minWidth: 400,
+    movable: false,
+    alwaysOnTop: true,
+    minimizable: false,
+    // autoHideMenuBar: true,
+    webPreferences: {
+      preload: ElectronPath.join(__dirname, 'preload.js'),
+    },
+  });
+
+  // and load the index.html of the app.
+  filterWindow.loadFile(ElectronPath.join(__dirname, 'filters.html'));
+  return filterWindow;
+};
 
 getMainWin = () => mainWindow;
 getPath = (name) => app.getPath(name);
@@ -71,4 +91,5 @@ getPath = (name) => app.getPath(name);
 module.exports = {
   getMainWin,
   getPath,
+  createFilterWindow,
 };

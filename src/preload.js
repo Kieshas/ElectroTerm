@@ -13,6 +13,7 @@ const ipc = {
             'openFile',
             'hexCheck',
             'sendMsg',
+            'openFilters',
         ],
         // From main to render.
         'receive': [
@@ -25,6 +26,7 @@ const ipc = {
             'updateSizeOnLoad',
             'setPrmsAndConnect',
             'selectFile',
+            'filtersLoaded',
         ]
     }
 };
