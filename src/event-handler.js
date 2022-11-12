@@ -82,11 +82,8 @@ ipcMain.handle('selectFile', () => {
     });
 });
 
-let filterWin;
-
 ipcMain.on('openFilters', (event, args) => {
-    // mainWindow.setSize(200, 400);
-    // mainWindow.setMinimumSize(200, 400); // in dire need of normal resizing in future
+    let filterWin;
     filterWin = index.createFilterWindow();
     mainWindow.setMovable(false);
     mainWindow.setMinimizable(false);

@@ -32,14 +32,7 @@ const outputLine = (line) => {
     }
     lineCount++;
 
-    if (hexCb.checked) {
-        output.textContent += asciiToHex(line).toUpperCase();
-    } else {
-        if (tsCb.checked) {
-            output.textContent += getCurrDate();
-        }
-        output.textContent += line;
-    } // can be used output.append() which arguably is better than current approach
+    output.append(line);
 
     if (!lockCb.checked) {
         output.scrollTop = output.scrollHeight;

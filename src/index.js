@@ -80,7 +80,6 @@ const createFilterWindow = () => {
     },
   });
 
-  // and load the index.html of the app.
   filterWindow.loadFile(ElectronPath.join(__dirname, 'filters.html'));
   return filterWindow;
 };

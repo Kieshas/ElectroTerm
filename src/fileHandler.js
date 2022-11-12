@@ -46,11 +46,12 @@ class FileHandler {
         }
     };
     printLineToFile(line) {
+        if (this.timeStamp == true) line = this.#getCurrDate('log') + line; //TODO: probably this should be used instead of one in frontend process and one in backend
+        if (this.hexOutput == true) line = this.#asciiToHex(line).toUpperCase();
         if (this.logToFile == true) {
-            if (this.timeStamp == true) line = this.#getCurrDate('log') + line; //TODO: probably this should be used instead of one in frontend process and one in backend
-            if (this.hexOutput == true) line = this.#asciiToHex(line).toUpperCase();
             fileSystem.appendFileSync(this.currFullPath, line, 'utf-8');
         }
+        return line;
     };
     restoreCurrFileLoc() {
         this.currFileLoc = this.mainWin.getPath('documents');
