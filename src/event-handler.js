@@ -237,5 +237,12 @@ ipcMain.on('openFilters', (event, args) => {
     }); // sukurt klase, kuri kursis vis nauja i lista kai pasispaus pliusas ir ez pz
 });
 
+ipcMain.on('saveSettings', (event, args) => {
+    let destination = args[0];
+    let values = args[1];
+    console.log(settingsHandler.filePath);
+
+});
+
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

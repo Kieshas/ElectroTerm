@@ -14,6 +14,7 @@ const ipc = {
             'hexCheck',
             'sendMsg',
             'openFilters',
+            'saveSettings',
         ],
         // From main to render.
         'receive': [

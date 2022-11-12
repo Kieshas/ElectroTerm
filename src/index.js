@@ -84,7 +84,8 @@ const createFilterWindow = () => {
   filterWindow.loadFile(ElectronPath.join(__dirname, 'filters.html'));
   return filterWindow;
 };
-
+//monitorius iosam arba siaip belekam bbz liveiodata
+// TCP kad skaityti RD
 getMainWin = () => mainWindow;
 getPath = (name) => app.getPath(name);
 

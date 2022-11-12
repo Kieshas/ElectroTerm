@@ -1,6 +1,8 @@
 const DMcss = document.getElementById('darkModeCss');
 const parent = DMcss.parentNode;
 const containerDiv = document.getElementById('container');
+const saveBtn = document.getElementById('saveBtn');
+const closeBtn = document.getElementById('closeBtn');
 let addNewRowBtn;// reassignable
 let rmRowBtn;// reassignable
 
@@ -42,10 +44,10 @@ const addNewRow = () => {
     newRow.innerHTML =         
     `   
         <div class="col p-0">
-        <input type="text" class="form-control" aria-label="filterText" id="filterText${rowIdx}" placeholder="Filter text">
+        <input type="text" class="form-control textCntnt" aria-label="filterText" id="filterText${rowIdx}" placeholder="Filter text">
         </div>  
         <div class="col-2 col-md-1 p-0">
-        <input type="color" class="form-control h-100" aria-label="filterColor" id="filterColor${rowIdx}">
+        <input type="color" class="form-control h-100 filterCntnt" aria-label="filterColor" id="filterColor${rowIdx}">
         </div>
         <button class="col-2 col-md-1 btn btn-outline-primary" type="button" id="addNewRowBtn">
         +
@@ -56,15 +58,12 @@ const addNewRow = () => {
     `
     containerDiv.append(newRow);
     rows.push(newRow);
-    console.log(rows);
     addNewRowBtn = document.getElementById('addNewRowBtn');
     rmRowBtn = document.getElementById(`rmRowBtn${rowIdx}`);
     addNewRowBtn.addEventListener('click', () => {
         addNewRow();
         window.scrollTo(0, document.body.scrollHeight);
     });
-    // kazkur persidengia sitos xunios indexai, reikia perrasyt normaliai kad nebutu pagal kazkoki rows.length kuris bbz koks gali 
-    // but at any time. reik kazkokio mechanizmuko mazo kuris sektu laisvus indexus ir i juos kaisiotu
     rmRowBtn.addEventListener('click', fn = (args) => {
         console.log(args);
         let arrIdx = rows.indexOf(args.path[1]); // adjust path index in case inner HTML gets changed
@@ -78,5 +77,20 @@ const addNewRow = () => {
         }
     });
 }
+
+saveBtn.addEventListener('click', () => {
+    let pairsToSave = new Array();
+    document.querySelectorAll('.textCntnt').forEach((args) => {
+        let pair = new Array();
+        pair.push(args.value, document.getElementById('filterColor' + args.id.slice(10)).value);
+        pairsToSave.push(pair);
+    });
+    window.ipcRender.send('saveSettings', "filterSettings", pairsToSave);
+    console.log(pairsToSave);
+});
+
+closeBtn.addEventListener('click', () => {
+    window.close();
+});
 
 addNewRow();
