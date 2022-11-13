@@ -8,14 +8,6 @@ let rmRowBtn;// reassignable
 
 let rows = new Array();
 
-window.ipcRender.invoke('filtersLoaded').then((args) => {
-    if (args) {
-        parent.appendChild(DMcss);
-    } else {
-        parent.removeChild(DMcss);
-    }
-});
-
 const findNextAvailableIdx = () => {
     let availableIdx = 0;
     let matchNotFound = false;
@@ -33,7 +25,7 @@ const findNextAvailableIdx = () => {
     return availableIdx;
 }
 
-const addNewRow = () => {
+const addNewRow = ({textVal, colorVal}) => {
     rowIdx = findNextAvailableIdx();
     const newRow = document.createElement('div');
     newRow.className = "row mb-1 justify-content-center";
@@ -60,8 +52,14 @@ const addNewRow = () => {
     rows.push(newRow);
     addNewRowBtn = document.getElementById('addNewRowBtn');
     rmRowBtn = document.getElementById(`rmRowBtn${rowIdx}`);
+    if (textVal) {
+        document.getElementById(`filterText${rowIdx}`).value = textVal;
+    }
+    if (colorVal) {
+        document.getElementById(`filterColor${rowIdx}`).value = colorVal;
+    }
     addNewRowBtn.addEventListener('click', () => {
-        addNewRow();
+        addNewRow({textVal: null, colorVal: null});
         window.scrollTo(0, document.body.scrollHeight);
     });
     rmRowBtn.addEventListener('click', fn = (args) => {
@@ -82,15 +80,33 @@ saveBtn.addEventListener('click', () => {
     let pairsToSave = new Array();
     document.querySelectorAll('.textCntnt').forEach((args) => {
         let pair = new Array();
-        pair.push(args.value, document.getElementById('filterColor' + args.id.slice(10)).value);
-        pairsToSave.push(pair);
+        if (args.value) {
+            pair.push(args.value, document.getElementById('filterColor' + args.id.slice(10)).value);
+            pairsToSave.push(pair);
+        }
     });
     window.ipcRender.send('saveSettings', "filterSettings", pairsToSave);
-    console.log(pairsToSave);
+    window.close();
 });
 
 closeBtn.addEventListener('click', () => {
     window.close();
 });
 
-addNewRow();
+window.ipcRender.invoke('filtersLoaded').then((args) => {
+    const darkmode = args[0];
+    const filters = args[1];
+    if (darkmode) {
+        parent.appendChild(DMcss);
+    } else {
+        parent.removeChild(DMcss);
+    }
+    console.log(filters);
+    if (filters == null || filters.length == 0) {
+        addNewRow({textVal: null, colorVal: null});
+    } else {
+        filters.forEach( (filter) => {
+            addNewRow({textVal: filter[0], colorVal: filter[1]});
+        })
+    }
+});

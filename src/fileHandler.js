@@ -1,17 +1,17 @@
 const fileSystem = require('fs');
 
-class FileHandler {
+class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i think. maybe in the future
     logToFile = false;
     currFileName = "";
     currFileLoc = "";
     currFullPath = "";
     timeStamp = false;
     hexOutput = false;
-    mainWin = null;
+    index = null;
 
-    constructor(mainWindow) {
-        this.mainWin = mainWindow;
-        this.currFileLoc = this.mainWin.getPath('documents');
+    constructor(index) {
+        this.index = index;
+        this.currFileLoc = this.index.getPath('documents');
     };
 
     set setLogToFile(newState) {
@@ -40,21 +40,33 @@ class FileHandler {
         return this.logToFile;
     };
 
-    createNewFile() {
+    readFile(filePath) {
+        return fileSystem.readFileSync(filePath)
+    };
+    createFile(filePath) {
+        fileSystem.appendFileSync(filePath, "", 'utf-8');
+    };
+    writeFile(filePath, content) {
+        fileSystem.writeFileSync(filePath, content, 'utf-8');
+    };
+    appendFile(filePath, content) {
+        fileSystem.appendFileSync(filePath, content, 'utf-8');
+    };
+    createNewLogFile() {
         if (this.logToFile == true) {
             fileSystem.appendFileSync(this.currFullPath, "", 'utf-8');
         }
     };
-    printLineToFile(line) {
-        if (this.timeStamp == true) line = this.#getCurrDate('log') + line; //TODO: probably this should be used instead of one in frontend process and one in backend
+    formatAndPrintLn(line) {
+        if (this.timeStamp == true) line = this.#getCurrDate('log') + line;
         if (this.hexOutput == true) line = this.#asciiToHex(line).toUpperCase();
         if (this.logToFile == true) {
             fileSystem.appendFileSync(this.currFullPath, line, 'utf-8');
         }
         return line;
     };
-    restoreCurrFileLoc() {
-        this.currFileLoc = this.mainWin.getPath('documents');
+    restoreCurrLogFileLoc() {
+        this.currFileLoc = this.index.getPath('documents');
         this.currFileName = "";
         this.currFullPath = "";
     };

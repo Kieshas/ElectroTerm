@@ -9,6 +9,8 @@ const mainWindow = index.getMainWin();
 const fileHandler = new FileHandler(index);
 const portHandler = new PortHandler(mainWindow, fileHandler);
 
+const settingsFile = (index.getPath('userData') + '/settings.txt');
+
 ipcMain.handle('populateDD', () => {
     return new Promise((resolve) => {
         resolve(portHandler.PortList());
@@ -65,18 +67,18 @@ ipcMain.handle('selectFile', () => {
     return new Promise((resolve) => {
         if (fileHandler.getLogToFile == true) {
             fileHandler.setLogToFile = false;
-            fileHandler.restoreCurrFileLoc();
+            fileHandler.restoreCurrLogFileLoc();
             return resolve(false);
         }
         const selectFile = userSaveFile(fileHandler.currFileLoc + '\\' + fileHandler.getDefFileName);
         selectFile.then(({filePath}) => {
             fileHandler.setCurrFilePath = filePath;
             fileHandler.setLogToFile = true;
-            fileHandler.createNewFile();
+            fileHandler.createNewLogFile();
             resolve(true);
         }).catch(() => {
             fileHandler.setLogToFile = false;
-            fileHandler.restoreCurrFileLoc();
+            fileHandler.restoreCurrLogFileLoc();
             resolve(false);
         })
     });
@@ -89,7 +91,15 @@ ipcMain.on('openFilters', (event, args) => {
     mainWindow.setMinimizable(false);
     ipcMain.handle('filtersLoaded', () => {
         return new Promise((resolve) => {
-            resolve(args[0]);
+            let savedFilters;
+            try {
+                savedFilters = JSON.parse(fileHandler.readFile(settingsFile));
+                savedFilters = savedFilters.filters;
+            } catch {
+                savedFilters = null;
+            }
+            retval = [args[0], savedFilters];
+            resolve(retval);
         })
     });
     filterWin.on('closed', () => {
@@ -97,14 +107,36 @@ ipcMain.on('openFilters', (event, args) => {
         mainWindow.setMovable(true);
         mainWindow.setMinimizable(true);
         filterWin = null;
-    }); // sukurt klase, kuri kursis vis nauja i lista kai pasispaus pliusas ir ez pz
+    });
 });
 
 ipcMain.on('saveSettings', (event, args) => {
     let destination = args[0];
-    let values = args[1];
-    console.log(settingsHandler.filePath);
+    let fileCont;
+    let fileObj = {
+        filters: null,
+    };
+    try {
+        fileCont = JSON.parse(fileHandler.readFile(settingsFile));
+    } catch {
+        fileCont = null;
+    }
+    if (fileCont != null) { // not sure if this will work with more settings. For a later date
+        fileObj = fileCont;
+    }
 
+    switch (destination) {
+        case "filterSettings":
+            fileObj.filters = args[1];
+            if (fileCont != null) {
+                console.log(fileCont.filters);
+            }
+            break;
+        default:
+            break;
+    }
+    fileHandler.writeFile(settingsFile, "");
+    fileHandler.appendFile(settingsFile, (JSON.stringify(fileObj, null, 4)));
 });
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas

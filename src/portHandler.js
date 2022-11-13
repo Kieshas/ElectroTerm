@@ -29,7 +29,6 @@ class PortHandler {
     
             this.parser.on("data", (line) => {
                 this.mainWindow.webContents.send('printLn', this.#parserEvt(line));
-                // this.#parserEvt(line);
             });
             this.SPort.open((err) => {
                 if (err == null) {
@@ -48,7 +47,7 @@ class PortHandler {
         this.parser = null;
     };
     #parserEvt(line) {
-        return this.fileHandler.printLineToFile(line);
+        return this.fileHandler.formatAndPrintLn(line);
     };
     restart(args) {
         if (this.SPort == null) return;
