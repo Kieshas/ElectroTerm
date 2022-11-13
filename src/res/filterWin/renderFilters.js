@@ -3,6 +3,7 @@ const parent = DMcss.parentNode;
 const containerDiv = document.getElementById('container');
 const saveBtn = document.getElementById('saveBtn');
 const closeBtn = document.getElementById('closeBtn');
+const clearAllBtn = document.getElementById('clearAllBtn');
 let addNewRowBtn;// reassignable
 let rmRowBtn;// reassignable
 
@@ -28,7 +29,7 @@ const findNextAvailableIdx = () => {
 const addNewRow = ({textVal, colorVal}) => {
     rowIdx = findNextAvailableIdx();
     const newRow = document.createElement('div');
-    newRow.className = "row mb-1 justify-content-center";
+    newRow.className = "row mb-1 justify-content-center filterRow";
     newRow.id = `contentRow${rowIdx}`;
     if (rows.length > 0) {
         document.getElementById('addNewRowBtn').remove();
@@ -63,7 +64,6 @@ const addNewRow = ({textVal, colorVal}) => {
         window.scrollTo(0, document.body.scrollHeight);
     });
     rmRowBtn.addEventListener('click', fn = (args) => {
-        console.log(args);
         let arrIdx = rows.indexOf(args.path[1]); // adjust path index in case inner HTML gets changed
         if ((rowIdx > 0) && (arrIdx > -1)) {
             if (!(rows[arrIdx].innerHTML.toString().includes("addNewRowBtn"))) {
@@ -91,6 +91,17 @@ saveBtn.addEventListener('click', () => {
 
 closeBtn.addEventListener('click', () => {
     window.close();
+});
+
+clearAllBtn.addEventListener('click', () => {
+    document.querySelectorAll('.filterRow').forEach((args) => {
+        if (!args.innerHTML.toString().includes("addNewRowBtn")) {
+            args.remove();
+        } else {
+            document.getElementById('filterText' + args.id.slice(10)).value = "";
+            document.getElementById('filterColor' + args.id.slice(10)).value = "#000000";
+        }
+    });
 });
 
 window.ipcRender.invoke('filtersLoaded').then((args) => {

@@ -15,7 +15,8 @@ document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
 document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
         document.getElementById('fontDropDown').textContent = "Font: " + a.text;
-        document.getElementById('output').style.fontSize = a.text;
+        output.style.fontSize = a.text;
+        outputFiltered.style.fontSize = a.text;
     })
 });
 

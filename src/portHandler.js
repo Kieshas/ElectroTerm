@@ -70,7 +70,7 @@ class PortHandler {
         const green = parseInt(hexBackground.slice(3, 5), 16);
         const blue = parseInt(hexBackground.slice(5, 7), 16);
         let textColor;
-        if ((red * 0.299 + green * 0.587 + blue * 0.114) > 186) {
+        if ((red * 0.299 + green * 0.587 + blue * 0.114) > 160) {
             textColor = "#000000";
         } else {
             textColor = "#ffffff";
