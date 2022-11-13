@@ -112,7 +112,6 @@ window.ipcRender.invoke('filtersLoaded').then((args) => {
     } else {
         parent.removeChild(DMcss);
     }
-    console.log(filters);
     if (filters == null || filters.length == 0) {
         addNewRow({textVal: null, colorVal: null});
     } else {

@@ -107,7 +107,9 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
                 showPopup("Communication Error", "Not connected");
                 return;
             }
-            sendMsg(macroBtnVal[(Number(btn.id.slice(6)) - 1)]); //subtract length of "Macro-" from the start - 1 since macro id's start from 1
+            if (macroBtnVal[(Number(btn.id.slice(6)) - 1)]) {
+                sendMsg(macroBtnVal[(Number(btn.id.slice(6)) - 1)]); //subtract length of "Macro-" from the start - 1 since macro id's start from 1
+            }
         }
     });
 });
