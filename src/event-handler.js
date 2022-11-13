@@ -114,6 +114,7 @@ ipcMain.on('saveSettings', (event, args) => {
     let fileCont;
     let fileObj = {
         filters: null,
+        macros: null,
     };
     try {
         fileCont = JSON.parse(fileHandler.readFile(settingsFile));
@@ -127,10 +128,10 @@ ipcMain.on('saveSettings', (event, args) => {
     switch (destination) {
         case "filterSettings":
             fileObj.filters = args[1];
-            if (fileCont != null) {
-                console.log(fileCont.filters);
-            }
             portHandler.updateFilters(fileObj.filters);
+            break;
+        case "macroSettings":
+            fileObj.macros = args[1];
             break;
         default:
             break;
@@ -138,6 +139,26 @@ ipcMain.on('saveSettings', (event, args) => {
     fileHandler.writeFile(settingsFile, "");
     fileHandler.appendFile(settingsFile, (JSON.stringify(fileObj, null, 4)));
 });
+
+ipcMain.handle('requestSettings', (event, args) => {
+    let destination = args[0];
+    return new Promise((resolve) => {
+        let fileContent = null;
+        try {
+            fileContent = JSON.parse(fileHandler.readFile(settingsFile));
+        } catch {
+            fileContent = null;
+            resolve(null);
+        }
+        switch(destination) {
+            case "macroSettings":
+                resolve(fileContent.macros);
+                break;
+            default:
+                break;
+        }
+    });
+})
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

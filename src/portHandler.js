@@ -13,7 +13,7 @@ class PortHandler {
     constructor(mainWindow, fileHandler) {
         this.mainWindow = mainWindow;
         this.fileHandler = fileHandler;
-        this.filters = this.fileHandler.loadSettings().filters;
+        this.filters = this.fileHandler.loadSettings() != null ? this.fileHandler.loadSettings().filters : null;
     }
 
     set changeBaud(newBaud) {

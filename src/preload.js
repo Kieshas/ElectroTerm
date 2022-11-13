@@ -29,6 +29,7 @@ const ipc = {
             'setPrmsAndConnect',
             'selectFile',
             'filtersLoaded',
+            'requestSettings',
         ]
     }
 };

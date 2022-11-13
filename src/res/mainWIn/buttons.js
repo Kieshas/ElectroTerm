@@ -101,6 +101,15 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
             promiseToWait.then((input) => {
                 btn.textContent = input[0];
                 macroBtnVal[(Number(btn.id.slice(6)) - 1)] = input[1]; //subtract length of "Macro-" from the start - 1 since macro id's start from 1
+
+                let valToSave = new Array;
+                for(let i = 0; i < macroBtnVal.length; i++) {
+                    let valToSavePair = new Array;
+                    valToSavePair.push(document.getElementById(`Macro-${i + 1}`).textContent);
+                    valToSavePair.push(macroBtnVal[i]);
+                    valToSave.push(valToSavePair);
+                }
+                window.ipcRender.send('saveSettings', "macroSettings", valToSave);
             })
         } else {
             if (connectBtn.className == "col btn btn-outline-success") {
@@ -114,6 +123,14 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
     });
 });
 let macroBtnVal = new Array(macroCnt);
+
+window.ipcRender.invoke('requestSettings', 'macroSettings').then( (args) => {
+    if (args == null) return;
+    for (let i = 0; i < args.length; i++) {
+        document.getElementById(`Macro-${i + 1}`).textContent = args[i][0];
+        macroBtnVal[i] = args[i][1];
+    }
+});
 
 openFiltersBtn.addEventListener('click', () => {
     window.ipcRender.send('openFilters', darkModeCb.checked);

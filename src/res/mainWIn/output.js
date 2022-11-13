@@ -26,14 +26,17 @@ const getCurrDate = () => {
     return correctCurDate;
 }
 
-const outputLine = (line) => {
+const outputLine = (line) => { // galima padaryt sakykim ~10 <pre html elementu ir pildyt juos is eiles, kad nereloadint viso text lango su kiekviena eilute, kas ganetinai leta.
     if (lineCount >= 10000) {
         ClearOutputs();
     }
     lineCount++;
 
-    // output.append(line + '\n');
-    output.innerHTML += (line);
+    if (line.includes('<mark')) { // reduce DOM reloads
+        output.innerHTML += (line);
+    } else {
+        output.append(line + '\n');
+    }
 
     if (!lockCb.checked) {
         output.scrollTop = output.scrollHeight;
