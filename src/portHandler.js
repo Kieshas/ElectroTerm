@@ -8,10 +8,12 @@ class PortHandler {
     currPort = null;
     mainWindow = null;
     fileHandler = null;
+    filters = null;
 
     constructor(mainWindow, fileHandler) {
         this.mainWindow = mainWindow;
         this.fileHandler = fileHandler;
+        this.filters = this.fileHandler.loadSettings().filters;
     }
 
     set changeBaud(newBaud) {
@@ -28,7 +30,7 @@ class PortHandler {
             this.SPort.pipe(this.parser);
     
             this.parser.on("data", (line) => {
-                this.mainWindow.webContents.send('printLn', this.#parserEvt(line));
+                this.#parserEvt(line);
             });
             this.SPort.open((err) => {
                 if (err == null) {
@@ -47,8 +49,34 @@ class PortHandler {
         this.parser = null;
     };
     #parserEvt(line) {
-        return this.fileHandler.formatAndPrintLn(line);
+        let filterMatched = false;
+        let formattedLn = this.fileHandler.formatAndPrintLn(line);
+        this.filters.forEach( (filterPair) => {
+            if (formattedLn.includes(filterPair[0])) {
+                const filterColor = filterPair[1];
+                const indexOfFilter = formattedLn.indexOf(filterPair[0]);
+                const textColor = this.#getTextColor(filterPair[1]);
+                formattedLn = formattedLn.slice(0, indexOfFilter) + `<mark style="background-color: ${filterColor}; color: ${textColor}">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</mark>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
+                filterMatched = true;
+            }
+        });
+        if (filterMatched) {
+            this.mainWindow.webContents.send('printFilteredLn', formattedLn);
+        }
+        this.mainWindow.webContents.send('printLn', formattedLn);
     };
+    #getTextColor(hexBackground) {
+        const red = parseInt(hexBackground.slice(1, 3), 16);
+        const green = parseInt(hexBackground.slice(3, 5), 16);
+        const blue = parseInt(hexBackground.slice(5, 7), 16);
+        let textColor;
+        if ((red * 0.299 + green * 0.587 + blue * 0.114) > 186) {
+            textColor = "#000000";
+        } else {
+            textColor = "#ffffff";
+        }
+        return textColor;
+    }
     restart(args) {
         if (this.SPort == null) return;
         this.SPort.set({rts: args[0]}, () => {
@@ -67,6 +95,9 @@ class PortHandler {
     sendMsg(msg) {
         this.SPort.write((msg + '\r\n'));
     };
+    updateFilters(filters) {
+        this.filters = filters;
+    }
 };
 
 module.exports = {

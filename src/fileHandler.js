@@ -8,10 +8,12 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
     timeStamp = false;
     hexOutput = false;
     index = null;
+    settingsFile = null;
 
-    constructor(index) {
+    constructor(index, settingsFile) {
         this.index = index;
         this.currFileLoc = this.index.getPath('documents');
+        this.settingsFile = settingsFile;
     };
 
     set setLogToFile(newState) {
@@ -70,6 +72,17 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
         this.currFileName = "";
         this.currFullPath = "";
     };
+    loadSettings() {
+        let fileCont;
+        try {
+            fileCont = JSON.parse(this.readFile(this.settingsFile));
+        } catch {
+            fileCont = null;
+        }
+        if (fileCont != null) {
+            return fileCont;
+        }
+    }
     #getCurrDate(format) {
         const currDate = new Date();
         let correctCurDate;

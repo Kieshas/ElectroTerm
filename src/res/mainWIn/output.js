@@ -32,7 +32,8 @@ const outputLine = (line) => {
     }
     lineCount++;
 
-    output.append(line);
+    // output.append(line + '\n');
+    output.innerHTML += (line);
 
     if (!lockCb.checked) {
         output.scrollTop = output.scrollHeight;
@@ -40,4 +41,10 @@ const outputLine = (line) => {
     }
 }
 
+const outputFilteredLine = (line) => {
+    outputFiltered.innerHTML += (line);
+}
+
 window.ipcRender.receive('printLn', (line) => outputLine(line));
+
+window.ipcRender.receive('printFilteredLn', (line) => outputFilteredLine(line));

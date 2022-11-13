@@ -5,11 +5,10 @@ const { FileHandler } = require('./fileHandler');
 const { PortHandler } = require('./portHandler');
 
 const mainWindow = index.getMainWin();
-
-const fileHandler = new FileHandler(index);
-const portHandler = new PortHandler(mainWindow, fileHandler);
-
 const settingsFile = (index.getPath('userData') + '/settings.txt');
+
+const fileHandler = new FileHandler(index, settingsFile);
+const portHandler = new PortHandler(mainWindow, fileHandler);
 
 ipcMain.handle('populateDD', () => {
     return new Promise((resolve) => {
@@ -131,6 +130,7 @@ ipcMain.on('saveSettings', (event, args) => {
             if (fileCont != null) {
                 console.log(fileCont.filters);
             }
+            portHandler.updateFilters(fileObj.filters);
             break;
         default:
             break;

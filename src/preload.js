@@ -20,6 +20,7 @@ const ipc = {
         'receive': [
             'resizeEvt',
             'printLn',
+            'printFilteredLn',
         ],
         // From render to main and back again.
         'sendReceive': [
