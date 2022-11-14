@@ -3,6 +3,8 @@ const tsCb = document.getElementById('timestampCb');
 const hexCb = document.getElementById('hexCb');
 const darkModeCb = document.getElementById('darkModeCb');
 const editModeCb = document.getElementById('editModeCb');
+const rtsCb = document.getElementById('rtsBtn');
+const dtrCb = document.getElementById('dtrBtn');
 
 lockCb.addEventListener('click', () => {
     if (lockCb.checked) {
@@ -44,4 +46,22 @@ darkModeCb.addEventListener('click', () => {
         document.getElementById('darkModeStat').src="res/resources/darkShquare.png"
         parent.removeChild(DMcss);
     }
+});
+
+rtsCb.addEventListener('click', () => {
+    if (connectBtn.className == "col btn btn-outline-success") {
+        showPopup("Communication Error", "Not connected");
+        return;
+    }
+    
+    window.ipcRender.send('restartEvt', "RTS", rtsCb.checked);
+});
+
+dtrCb.addEventListener('click', () => {
+    if (connectBtn.className == "col btn btn-outline-success") {
+        showPopup("Communication Error", "Not connected");
+        return;
+    }
+    
+    window.ipcRender.send('restartEvt', "DTR", dtrCb.checked);
 });

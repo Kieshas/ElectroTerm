@@ -1,6 +1,5 @@
 const connectBtn = document.getElementById('connect');
 const clearBtn = document.getElementById('clearBtn');
-const restartBtn = document.getElementById('restartBtn');
 const logToFileBtn = document.getElementById('logToFileBtn');
 const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
@@ -37,25 +36,6 @@ connectBtn.addEventListener('click', () => {
 
 clearBtn.addEventListener('click', () => {
     ClearOutputs();
-});
-
-restartBtn.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
-        showPopup("Communication Error", "Not connected");
-        return;
-    }
-    if (platform == null) {
-        showPopup("Communication Error", "Platform not selected");
-        return;
-    }
-    
-    let rtsState;
-    if (platform == "ARM") {
-        rtsState = false;
-    } else if (platform == "ESP") {
-        rtsState = true;
-    }
-    window.ipcRender.send('restartEvt', rtsState);
 });
 
 logToFileBtn.addEventListener('click', () => {

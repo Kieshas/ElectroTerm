@@ -36,6 +36,9 @@ const PortDDclickEvent = (element) => {
     element.addEventListener("click", () => {
         port = element.text;
         document.getElementById('portDropDown').textContent = port;
+        window.ipcRender.send('disconnectPort');
+        connectBtn.className = "col btn btn-outline-success";
+        connectBtn.textContent = "Connect";
     });
 }
 

@@ -24,6 +24,14 @@
     <div class="m-1">
       <div class="container-fluid">
         <div class="row mb-1">
+
+          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="platformDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            Mode
+          </button>
+          <ul class="dropdown-menu platform" aria-labelledby="platformDropDown" id="platformDDcontent">
+            <li><a class="dropdown-item" href="#">SERIAL</a></li>
+            <li><a class="dropdown-item" href="#">TCP</a></li>
+          </ul>
           
           <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Port
@@ -48,14 +56,6 @@
             <li><a class="dropdown-item" href="#">256000</a></li>
             <li><a class="dropdown-item" href="#">460800</a></li>
             <li><a class="dropdown-item" href="#">921600</a></li>
-          </ul>
-
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="platformDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Platform
-          </button>
-          <ul class="dropdown-menu platform" aria-labelledby="platformDropDown" id="platformDDcontent">
-            <li><a class="dropdown-item" href="#">ESP</a></li>
-            <li><a class="dropdown-item" href="#">ARM</a></li>
           </ul>
 
           <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="fontDropDown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -116,7 +116,7 @@
           <pre readonly class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden;"></pre>
         </div>
 
-        <div class="row mb-1">
+        <div class="row mb-1 collapsableRow">
           <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-1">
             -
           </button>
@@ -152,15 +152,16 @@
           <label class="col-2 btn btn-outline-primary" for="editModeCb">Edit</label>
         </div>
 
-        <div class="row mb-1">
+        <div class="row mb-1 collapsableRow">
           <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn" id="sendMsgText">
           <button class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn">Send</button>
 
-          <button type="button" class="col-2 btn btn-outline-primary" autocomplete="off", id="restartBtn">
-            Restart
-          </button>
+          <input type="checkbox" class="btn-check" id="rtsBtn" autocomplete="off">
+          <label class="col-1 btn btn-outline-primary" for="rtsBtn">RTS</label>
+          
+          <input type="checkbox" class="btn-check" id="dtrBtn" autocomplete="off">
+          <label class="col-1 btn btn-outline-primary" for="dtrBtn">DTR</label>
         </div>
-
       </div>
     </div>
   </body>

@@ -79,14 +79,13 @@ class PortHandler {
         }
         return textColor;
     }
-    restart(args) {
+    RTSEvt(args) {
         if (this.SPort == null) return;
-        this.SPort.set({rts: args[0]}, () => {
-            this.SPort.close(() => {
-                this.cleanUp();
-                this.open();
-            });
-        }); // true for ESP false for STM
+        this.SPort.set({rts: args, dtr: false});
+    };
+    DTREvt(args) {
+        if (this.SPort == null) return;
+        this.SPort.set({dtr: args, rts: false});
     };
     close() {
         if (this.SPort == null) return;

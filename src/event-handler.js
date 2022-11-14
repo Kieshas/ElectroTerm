@@ -40,7 +40,15 @@ ipcMain.on('disconnectPort', () => {
 });
 
 ipcMain.on('restartEvt', (event, args) => {
-    portHandler.restart(args);
+    const DtrRts = args[0];
+    console.log(DtrRts);
+    if (DtrRts === 'DTR') {
+        console.log("DTR evt" + args[1]);
+        portHandler.DTREvt(args[1]);
+    } else {
+        console.log("RTS evt" + args[1]);
+        portHandler.RTSEvt(args[1]);
+    }
 });
 
 ipcMain.handle('updateSizeOnLoad', async () => {
