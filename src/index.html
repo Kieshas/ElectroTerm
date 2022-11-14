@@ -24,57 +24,58 @@
     <div class="m-1">
       <div class="container-fluid">
         <div class="row mb-1">
-
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="platformDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Mode
+          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="modeDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+            SERIAL
           </button>
-          <ul class="dropdown-menu platform" aria-labelledby="platformDropDown" id="platformDDcontent">
-            <li><a class="dropdown-item" href="#">SERIAL</a></li>
-            <li><a class="dropdown-item" href="#">TCP</a></li>
+          <ul class="dropdown-menu mode" aria-labelledby="modeDropDown" id="modeDDcontent">
+            <li><a class="dropdown-item" href="#">SERIAL </a></li>
+            <li><a class="dropdown-item" href="#">TCP </a></li>
           </ul>
-          
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+
+          <input type="text" class="col form-control collapsableCol" aria-label="TCPportText" id="TCPportInput" placeholder="Port" style="display: none;" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+
+          <button class="col btn btn-outline-primary dropdown-toggle collapsableCol" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Port
           </button>
           <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
           
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="col btn btn-outline-primary dropdown-toggle collapsableCol" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Baud
           </button>
           <ul class="dropdown-menu baud" aria-labelledby="baudDropDown" id="baudDDcontent">
-            <li><a class="dropdown-item" href="#">1200</a></li>
-            <li><a class="dropdown-item" href="#">2400</a></li>
-            <li><a class="dropdown-item" href="#">4800</a></li>
-            <li><a class="dropdown-item" href="#">9600</a></li>
-            <li><a class="dropdown-item" href="#">14400</a></li>
-            <li><a class="dropdown-item" href="#">19200</a></li>
-            <li><a class="dropdown-item" href="#">28800</a></li>
-            <li><a class="dropdown-item" href="#">38400</a></li>
-            <li><a class="dropdown-item" href="#">115200</a></li>
-            <li><a class="dropdown-item" href="#">128000</a></li>
-            <li><a class="dropdown-item" href="#">230400</a></li>
-            <li><a class="dropdown-item" href="#">256000</a></li>
-            <li><a class="dropdown-item" href="#">460800</a></li>
-            <li><a class="dropdown-item" href="#">921600</a></li>
+            <li><a class="dropdown-item" href="#">1200 </a></li>
+            <li><a class="dropdown-item" href="#">2400 </a></li>
+            <li><a class="dropdown-item" href="#">4800 </a></li>
+            <li><a class="dropdown-item" href="#">9600 </a></li>
+            <li><a class="dropdown-item" href="#">14400 </a></li>
+            <li><a class="dropdown-item" href="#">19200 </a></li>
+            <li><a class="dropdown-item" href="#">28800 </a></li>
+            <li><a class="dropdown-item" href="#">38400 </a></li>
+            <li><a class="dropdown-item" href="#">115200 </a></li>
+            <li><a class="dropdown-item" href="#">128000 </a></li>
+            <li><a class="dropdown-item" href="#">230400 </a></li>
+            <li><a class="dropdown-item" href="#">256000 </a></li>
+            <li><a class="dropdown-item" href="#">460800 </a></li>
+            <li><a class="dropdown-item" href="#">921600 </a></li>
           </ul>
 
           <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="fontDropDown" data-bs-toggle="dropdown" aria-expanded="false">
             Font: 16px
           </button>
           <ul class="dropdown-menu font" aria-labelledby="fontDropDown" id="fontDDcontent">
-            <li><a class="dropdown-item" href="#">10px</a></li>
-            <li><a class="dropdown-item" href="#">11px</a></li>
-            <li><a class="dropdown-item" href="#">12px</a></li>
-            <li><a class="dropdown-item" href="#">13px</a></li>
-            <li><a class="dropdown-item" href="#">14px</a></li>
-            <li><a class="dropdown-item" href="#">15px</a></li>
-            <li><a class="dropdown-item" href="#">16px</a></li>
-            <li><a class="dropdown-item" href="#">17px</a></li>
-            <li><a class="dropdown-item" href="#">18px</a></li>
-            <li><a class="dropdown-item" href="#">19px</a></li>
-            <li><a class="dropdown-item" href="#">20px</a></li>
-            <li><a class="dropdown-item" href="#">22px</a></li>
-            <li><a class="dropdown-item" href="#">26px</a></li>
+            <li><a class="dropdown-item" href="#">10px </a></li>
+            <li><a class="dropdown-item" href="#">11px </a></li>
+            <li><a class="dropdown-item" href="#">12px </a></li>
+            <li><a class="dropdown-item" href="#">13px </a></li>
+            <li><a class="dropdown-item" href="#">14px </a></li>
+            <li><a class="dropdown-item" href="#">15px </a></li>
+            <li><a class="dropdown-item" href="#">16px </a></li>
+            <li><a class="dropdown-item" href="#">17px </a></li>
+            <li><a class="dropdown-item" href="#">18px </a></li>
+            <li><a class="dropdown-item" href="#">19px </a></li>
+            <li><a class="dropdown-item" href="#">20px </a></li>
+            <li><a class="dropdown-item" href="#">22px </a></li>
+            <li><a class="dropdown-item" href="#">26px </a></li>
           </ul>
 
           <input type="checkbox" class="btn-check" id="timestampCb" autocomplete="off">
@@ -104,7 +105,7 @@
           <button type="button" class="col btn btn-outline-primary" id="openFiltersBtn">
             Filters
           </button>
-          <button type="button" class="col btn btn-outline-primary" id="openAutoRspBtn">
+          <button type="button" class="col btn btn-outline-primary collapsableCol" id="openAutoRspBtn">
             Autoresponses
           </button>
           <input type="checkbox" class="btn-check" id="darkModeCb" checked autocomplete="off">

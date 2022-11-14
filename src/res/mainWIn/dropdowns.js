@@ -3,7 +3,7 @@ const portDDcontent = document.getElementById('portDDcontent');
 
 let port = null;
 let baud = null;
-let platform = null;
+let workMode = "SERIAL";
 
 document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
@@ -20,10 +20,12 @@ document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
     })
 });
 
-document.querySelectorAll(".platform a").forEach( a => {
+document.querySelectorAll(".mode a").forEach( a => {
     a.addEventListener("click", () => {
-        document.getElementById('platformDropDown').textContent = a.text;
-        platform = a.text;
+        document.getElementById('modeDropDown').textContent = a.text;
+        disconnectPort(); // close previous work mode
+        workMode = a.text;
+        updateViewPort(workMode);
     });
 });
 
@@ -36,9 +38,7 @@ const PortDDclickEvent = (element) => {
     element.addEventListener("click", () => {
         port = element.text;
         document.getElementById('portDropDown').textContent = port;
-        window.ipcRender.send('disconnectPort');
-        connectBtn.className = "col btn btn-outline-success";
-        connectBtn.textContent = "Connect";
+        disconnectPort();
     });
 }
 

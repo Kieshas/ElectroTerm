@@ -15,6 +15,7 @@ const ipc = {
             'sendMsg',
             'openFilters',
             'saveSettings',
+            'closeServer',
         ],
         // From main to render.
         'receive': [
@@ -30,6 +31,7 @@ const ipc = {
             'selectFile',
             'filtersLoaded',
             'requestSettings',
+            'openServer',
         ]
     }
 };

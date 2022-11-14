@@ -5,7 +5,24 @@ const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
 const openFiltersBtn = document.getElementById('openFiltersBtn');
 
-connectBtn.addEventListener('click', () => {
+const disconnectPort = () => {
+    switch (workMode) {
+        case "SERIAL ":
+            window.ipcRender.send('disconnectPort');
+            connectBtn.className = "col btn btn-outline-success";
+            connectBtn.textContent = "Connect";
+            break;
+        case "TCP ":
+            window.ipcRender.send('closeServer');
+            connectBtn.className = "col btn btn-outline-success";
+            connectBtn.textContent = "Open";
+            break;
+        default:
+            break;
+    }
+}
+
+const connectActionSerial = () => {
     if (baud == null && port == null) {
         showPopup("Selection error", "Please select port and baud rate");
         return;
@@ -28,9 +45,41 @@ connectBtn.addEventListener('click', () => {
         });
 
     } else {
-        connectBtn.className = "col btn btn-outline-success";
-        connectBtn.textContent = "Connect";
-        window.ipcRender.send('disconnectPort');
+        disconnectPort();
+    }
+}
+
+const connectActionTCP = () => {
+    if (TCPportInput.value == "") {
+        showPopup("Selection error", "Please input Port");
+        return;
+    }
+
+    if (connectBtn.className == "col btn btn-outline-success") {
+        window.ipcRender.invoke('openServer', TCPportInput.value).then(() => {
+            connectBtn.className = "col btn btn-outline-danger";
+            connectBtn.textContent = "Close";
+            window.ipcRender.send('saveSettings', "lastUsedPort", TCPportInput.value);
+        }).catch((err) => {
+            err = err.toString();
+            const unNeededStr = "'openServer':";
+            showPopup("Communication error", err.substr(err.indexOf(unNeededStr) + unNeededStr.length));
+        });
+    } else {
+        disconnectPort();
+    }
+}
+
+connectBtn.addEventListener('click', () => {
+    switch (workMode) {
+        case "SERIAL ":
+            connectActionSerial();
+            break;
+        case "TCP ":
+            connectActionTCP();
+            break;
+        default:
+            break;
     }
 });
 

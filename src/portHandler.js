@@ -30,7 +30,7 @@ class PortHandler {
             this.SPort.pipe(this.parser);
     
             this.parser.on("data", (line) => {
-                this.#parserEvt(line);
+                this.parserEvt(line);
             });
             this.SPort.open((err) => {
                 if (err == null) {
@@ -48,7 +48,7 @@ class PortHandler {
         this.SPort = null;
         this.parser = null;
     };
-    #parserEvt(line) {
+    parserEvt(line) {
         let formattedLn = this.fileHandler.formatAndPrintLn(line);
         let filterMatched = false;
         if (this.filters != null) {

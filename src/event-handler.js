@@ -3,12 +3,14 @@ const { userSaveFile } = require('./dialogWindow');
 const index = require('./index');
 const { FileHandler } = require('./fileHandler');
 const { PortHandler } = require('./portHandler');
+const { TCPHandler } = require('./tcp');
 
 const mainWindow = index.getMainWin();
 const settingsFile = (index.getPath('userData') + '/settings.txt');
 
 const fileHandler = new FileHandler(index, settingsFile);
 const portHandler = new PortHandler(mainWindow, fileHandler);
+const tcpHandler = new TCPHandler((data) => { portHandler.parserEvt(data); });
 
 ipcMain.handle('populateDD', () => {
     return new Promise((resolve) => {
@@ -41,12 +43,9 @@ ipcMain.on('disconnectPort', () => {
 
 ipcMain.on('restartEvt', (event, args) => {
     const DtrRts = args[0];
-    console.log(DtrRts);
     if (DtrRts === 'DTR') {
-        console.log("DTR evt" + args[1]);
         portHandler.DTREvt(args[1]);
     } else {
-        console.log("RTS evt" + args[1]);
         portHandler.RTSEvt(args[1]);
     }
 });
@@ -123,6 +122,7 @@ ipcMain.on('saveSettings', (event, args) => {
     let fileObj = {
         filters: null,
         macros: null,
+        lastUsedPort: null,
     };
     try {
         fileCont = JSON.parse(fileHandler.readFile(settingsFile));
@@ -141,6 +141,8 @@ ipcMain.on('saveSettings', (event, args) => {
         case "macroSettings":
             fileObj.macros = args[1];
             break;
+        case "lastUsedPort":
+            fileObj.lastUsedPort = args[1];
         default:
             break;
     }
@@ -159,14 +161,37 @@ ipcMain.handle('requestSettings', (event, args) => {
             resolve(null);
         }
         switch(destination) {
+            case "filterSettings":
+                resolve(fileContent.filters);
+                break;
             case "macroSettings":
                 resolve(fileContent.macros);
+                break;
+            case "lastUsedPort":
+                resolve(fileContent.lastUsedPort);
                 break;
             default:
                 break;
         }
     });
 })
+
+ipcMain.handle('openServer', (event, args) => {
+    const retVal = tcpHandler.openServer(args[0]);
+
+    return new Promise((resolve, reject) => {
+        retVal.then(() => {
+            resolve();
+        }).catch((err) => {
+            // portHandler.cleanUp();
+            reject(err);
+        })
+    })   
+});
+
+ipcMain.on('closeServer', () => {
+    tcpHandler.closeServer();
+});
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui
