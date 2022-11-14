@@ -50,21 +50,22 @@ class PortHandler {
     };
     #parserEvt(line) {
         let formattedLn = this.fileHandler.formatAndPrintLn(line);
-        this.mainWindow.webContents.send('printLn', formattedLn);
-        if (this.filters == null) return;
         let filterMatched = false;
-        this.filters.forEach( (filterPair) => {
-            if (formattedLn.includes(filterPair[0])) {
-                const filterColor = filterPair[1];
-                const indexOfFilter = formattedLn.indexOf(filterPair[0]);
-                const textColor = this.#getTextColor(filterPair[1]);
-                formattedLn = formattedLn.slice(0, indexOfFilter) + `<mark style="background-color: ${filterColor}; color: ${textColor}">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</mark>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
-                filterMatched = true;
-            }
-        });
+        if (this.filters != null) {
+            this.filters.forEach( (filterPair) => {
+                if (formattedLn.includes(filterPair[0])) {
+                    const filterColor = filterPair[1];
+                    const indexOfFilter = formattedLn.indexOf(filterPair[0]);
+                    const textColor = this.#getTextColor(filterPair[1]);
+                    formattedLn = formattedLn.slice(0, indexOfFilter) + `<mark style="background-color: ${filterColor}; color: ${textColor}">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</mark>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
+                    filterMatched = true;
+                }
+            });
+        }
         if (filterMatched) {
             this.mainWindow.webContents.send('printFilteredLn', formattedLn);
         }
+        this.mainWindow.webContents.send('printLn', formattedLn);
     };
     #getTextColor(hexBackground) {
         const red = parseInt(hexBackground.slice(1, 3), 16);
