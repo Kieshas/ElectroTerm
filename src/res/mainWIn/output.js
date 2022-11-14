@@ -2,11 +2,13 @@ const output = document.getElementById('output');
 const outputFiltered = document.getElementById('outputFiltered');
 
 let lineCount = 0;
+let lineCountFiltered = 0;
 
 const ClearOutputs = () => {
     output.textContent = "";
     outputFiltered.textContent = "";
     lineCount = 0;
+    lineCountFiltered = 0;
 }
 
 const asciiToHex = (str) => { // needs some more attention. Kid of works and not in need of immediate attention
@@ -26,11 +28,15 @@ const getCurrDate = () => {
     return correctCurDate;
 }
 
-const outputLine = (line) => { // galima padaryt sakykim ~10 <pre html elementu ir pildyt juos is eiles, kad nereloadint viso text lango su kiekviena eilute, kas ganetinai leta.
-    if (lineCount >= 10000) { // sekti koki 1000 eiluciu ir kai virsija trinti is virsaus ir appendinti i apacia
-        ClearOutputs();
+const outputLine = (line) => {
+    let textTemp;
+    if (lineCount >= 1000) {
+        textTemp = output.innerHTML.split('\n');
+        textTemp.shift();
+        output.innerHTML = textTemp.join('\n');
+    } else {
+        lineCount++;
     }
-    lineCount++;
 
     if (line.includes('<mark')) { // reduce DOM reloads
         output.innerHTML += (line);
@@ -45,6 +51,14 @@ const outputLine = (line) => { // galima padaryt sakykim ~10 <pre html elementu 
 }
 
 const outputFilteredLine = (line) => {
+    let textTemp;
+    if (lineCountFiltered >= 1000) {
+        textTemp = outputFiltered.innerHTML.split('\n');
+        textTemp.shift();
+        outputFiltered.innerHTML = textTemp.join('\n');
+    } else {
+        lineCountFiltered++;
+    }
     outputFiltered.innerHTML += (line);
 }
 
