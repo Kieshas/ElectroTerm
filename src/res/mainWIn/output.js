@@ -63,3 +63,15 @@ output.addEventListener('scroll', () => {
         document.getElementById('lockedStat').src='res/resources/locked.png';
     }
 });
+
+outputFiltered.addEventListener('scroll', () => {
+    if ((outputFiltered.scrollHeight - outputFiltered.scrollTop) === (outputFiltered.clientHeight)) {
+        if (lockCb.checked) {
+            document.getElementById('lockedStat').src='res/resources/locked.png';
+            lockCb.checked = false;
+        }
+    } else {
+        lockCb.checked = true;
+        document.getElementById('lockedStat').src='res/resources/locked.png';
+    }
+});
