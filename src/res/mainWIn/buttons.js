@@ -127,7 +127,6 @@ const checkMacroRow = () => {
         if (macroBtnVal[i] == null || macroBtnVal[i] === "") {
             document.querySelector('.showIfMacrosFilled').style.display = "none";
         }
-        console.log(macroBtnVal[i]);
     }
     updtSzOnLoad();
 }
