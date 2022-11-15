@@ -65,7 +65,7 @@ const outputFilteredLine = (line) => {
             lineCntNoScrollFlt++;
         } else {
             for (let i = 0; i <= lineCntNoScrollFlt; i++) {
-                textTemp = outputFiltered.innerHTML.slice(output.innerHTML.indexOf('\n') + 1);
+                textTemp = outputFiltered.innerHTML.slice(outputFiltered.innerHTML.indexOf('\n') + 1);
                 outputFiltered.innerHTML = textTemp;
             }
             lineCntNoScrollFlt = 0;
