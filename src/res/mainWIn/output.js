@@ -81,7 +81,8 @@ window.ipcRender.receive('printLn', (line) => outputLine(line));
 window.ipcRender.receive('printFilteredLn', (line) => outputFilteredLine(line));
 
 output.addEventListener('scroll', () => {
-    if ((output.scrollHeight - output.scrollTop) === (output.clientHeight)) {
+    // console.log(Math.abs(output.scrollHeight - output.scrollTop - output.clientHeight));
+    if (Math.abs(output.scrollHeight - output.scrollTop - output.clientHeight) <= 30.0) { // 30px tolerance
         if (lockCb.checked) {
             document.getElementById('lockedStat').src='res/resources/locked.png';
             lockCb.checked = false;
@@ -93,7 +94,7 @@ output.addEventListener('scroll', () => {
 });
 
 outputFiltered.addEventListener('scroll', () => {
-    if ((outputFiltered.scrollHeight - outputFiltered.scrollTop) === (outputFiltered.clientHeight)) {
+    if (Math.abs(outputFiltered.scrollHeight - outputFiltered.scrollTop - outputFiltered.clientHeight) <= 30.0) {
         if (lockCb.checked) {
             document.getElementById('lockedStat').src='res/resources/locked.png';
             lockCb.checked = false;
