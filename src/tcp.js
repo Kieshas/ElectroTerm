@@ -28,6 +28,7 @@ class TCPHandler { // simple single way draft
     closeServer() {    
         if (this.serverHandle == null) return;
         this.serverHandle.close();
+        if (this.currSocket == null) return;
         this.currSocket.destroy();
         this.currSocket.unref();
     };

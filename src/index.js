@@ -87,9 +87,11 @@ const createFilterWindow = () => {
 // TCP kad skaityti RD
 getMainWin = () => mainWindow;
 getPath = (name) => app.getPath(name);
+getAppPath = () => app.getAppPath();
 
 module.exports = {
   getMainWin,
   getPath,
+  getAppPath,
   createFilterWindow,
 };

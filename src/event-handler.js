@@ -6,7 +6,7 @@ const { PortHandler } = require('./portHandler');
 const { TCPHandler } = require('./tcp');
 
 const mainWindow = index.getMainWin();
-const settingsFile = (index.getPath('userData') + '/settings.txt');
+const settingsFile = (index.getAppPath() + '/settings.json');
 
 const fileHandler = new FileHandler(index, settingsFile);
 const portHandler = new PortHandler(mainWindow, fileHandler);
