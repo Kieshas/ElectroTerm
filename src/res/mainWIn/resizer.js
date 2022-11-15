@@ -18,6 +18,7 @@ const resizeOutput = (size) => {
     height = size[1] - (height + additionalPXS);
     output.style.height = height.toString() + "px";
     outputFiltered.style.height = height.toString() + "px";
+    macroDDContent.style.maxHeight = size[1]/2 + "px";
     height = 0;
 } 
 

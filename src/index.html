@@ -113,8 +113,8 @@
         </div>
 
         <div class="row mb-1" id="outputRow">
-          <pre readonly class="col form-control mb-0" id="output" style="resize: none; overflow-y: auto; overflow-x: hidden;"></pre>
-          <pre readonly class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden;"></pre>
+          <pre readonly class="col form-control mb-0" id="output" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-right-radius: 0; border-bottom-right-radius: 0;"></pre>
+          <pre readonly class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-left-radius: 0; border-bottom-left-radius: 0;"></pre>
         </div>
 
         <div class="row mb-1 collapsableRow">
@@ -154,8 +154,12 @@
         </div>
 
         <div class="row mb-1 collapsableRow">
-          <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn" id="sendMsgText">
-          <button class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn">Send</button>
+          <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn" id="sendMsgText" >
+          <button type="button" class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">Send</button>
+          <button type="button" class="col-auto btn btn-outline-secondary darkBtn dropup dropdown-toggle dropdown-toggle-split" id="macroDD" data-bs-toggle="dropdown" aria-expanded="false" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+            <span class="visually-hidden">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" id="macroDDContent" style="font-size: 10px; overflow-y: scroll;"> </ul>
 
           <input type="checkbox" class="btn-check" id="rtsBtn" autocomplete="off">
           <label class="col-1 btn btn-outline-primary" for="rtsBtn">RTS</label>

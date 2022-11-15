@@ -4,6 +4,7 @@ const logToFileBtn = document.getElementById('logToFileBtn');
 const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
 const openFiltersBtn = document.getElementById('openFiltersBtn');
+const sendMsgText = document.getElementById('sendMsgText');
 
 const disconnectPort = () => {
     switch (workMode) {
@@ -117,7 +118,7 @@ sendMsgBtn.addEventListener('click', () => {
         showPopup("Communication Error", "Not connected");
         return;
     }
-    sendMsg(document.getElementById('sendMsgText').value);
+    sendMsg(sendMsgText.value);
 })
 
 let macroCnt = 0;

@@ -32,6 +32,7 @@ const ipc = {
             'filtersLoaded',
             'requestSettings',
             'openServer',
+            'requestMacros',
         ]
     }
 };

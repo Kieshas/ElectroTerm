@@ -199,5 +199,18 @@ ipcMain.on('closeServer', () => {
     tcpHandler.closeServer();
 });
 
+ipcMain.handle('requestMacros', () => {
+    return new Promise((resolve, reject) => {
+        let fileCont
+        try {
+            fileCont = fileHandler.readFile(index.getAppPath() + '/macros.txt');
+            fileCont = fileCont.toString().split('\n');
+            resolve(fileCont);
+        } catch {
+            reject("File macros.txt not found in app directory");
+        }
+    })
+});
+
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

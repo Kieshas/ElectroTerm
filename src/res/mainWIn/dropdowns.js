@@ -1,5 +1,7 @@
 const portDD = document.getElementById('portDropDown');
 const portDDcontent = document.getElementById('portDDcontent');
+const macroDD = document.getElementById('macroDD');
+const macroDDContent = document.getElementById('macroDDContent');
 
 let port = null;
 let baud = null;
@@ -74,5 +76,32 @@ portDD.addEventListener('show.bs.dropdown', () => {
                 portDDcontent.appendChild(li);
             });
         }
+    });
+});
+
+macroDD.addEventListener('show.bs.dropdown', () => {
+    window.ipcRender.invoke('requestMacros').then((args) => {
+        if (macroDDContent != null) {
+            while (macroDDContent.firstChild) {
+                macroDDContent.removeChild(macroDDContent.firstChild);
+            }
+        }
+        args.forEach( (arg) => {
+            let li = document.createElement("li");
+            let link = document.createElement("a");
+            let text = document.createTextNode(arg);
+            link.appendChild(text);
+            link.className = "dropdown-item";
+            link.href = "#";
+            link.addEventListener("click", () => {
+                sendMsgText.value = link.textContent;
+            });
+            li.appendChild(link);
+            macroDDContent.appendChild(li);
+        });
+    }).catch( (err) => {
+        err = err.toString();
+        const unNeededStr = "'requestMacros':";
+        showPopup("Read error", err.substr(err.indexOf(unNeededStr) + unNeededStr.length));
     });
 });
