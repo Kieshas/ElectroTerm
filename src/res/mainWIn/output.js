@@ -28,12 +28,19 @@ const getCurrDate = () => {
     return correctCurDate;
 }
 
+let lineCntNoScroll = 0;
 const outputLine = (line) => {
     let textTemp;
     if (lineCount >= 1000) {
-        textTemp = output.innerHTML.split('\n');
-        textTemp.shift();
-        output.innerHTML = textTemp.join('\n');
+        if (lockCb.checked) {
+            lineCntNoScroll++;
+        } else {
+            for (let i = 0; i <= lineCntNoScroll; i++) {
+                textTemp = output.innerHTML.slice(output.innerHTML.indexOf('\n') + 1);
+                output.innerHTML = textTemp;
+            }
+            lineCntNoScroll = 0;
+        }
     } else {
         lineCount++;
     }

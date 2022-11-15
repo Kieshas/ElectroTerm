@@ -3,7 +3,7 @@ const portDDcontent = document.getElementById('portDDcontent');
 
 let port = null;
 let baud = null;
-let workMode = "SERIAL";
+let workMode = "SERIAL ";
 
 document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
