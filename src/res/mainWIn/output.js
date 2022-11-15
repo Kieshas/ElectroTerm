@@ -57,12 +57,19 @@ const outputLine = (line) => {
     }
 }
 
+let lineCntNoScrollFlt = 0;
 const outputFilteredLine = (line) => {
     let textTemp;
     if (lineCountFiltered >= 1000) {
-        textTemp = outputFiltered.innerHTML.split('\n');
-        textTemp.shift();
-        outputFiltered.innerHTML = textTemp.join('\n');
+        if (lockCb.checked) {
+            lineCntNoScrollFlt++;
+        } else {
+            for (let i = 0; i <= lineCntNoScrollFlt; i++) {
+                textTemp = outputFiltered.innerHTML.slice(output.innerHTML.indexOf('\n') + 1);
+                outputFiltered.innerHTML = textTemp;
+            }
+            lineCntNoScrollFlt = 0;
+        }
     } else {
         lineCountFiltered++;
     }

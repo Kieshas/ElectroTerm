@@ -14,7 +14,6 @@ document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
 
 window.ipcRender.invoke('requestSettings', 'lastUsedFont').then( (args) => {
     if (args == null) return;
-    console.log(args);
     document.getElementById('fontDropDown').textContent = "Font: " + args;
     output.style.fontSize = args;
     outputFiltered.style.fontSize = args;
