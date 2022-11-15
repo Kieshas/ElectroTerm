@@ -121,6 +121,17 @@ sendMsgBtn.addEventListener('click', () => {
     sendMsg(sendMsgText.value);
 })
 
+const checkMacroRow = () => {
+    document.querySelector('.showIfMacrosFilled').style.display = "";
+    for (let i = 0; i < 10; i++) {
+        if (macroBtnVal[i] == null || macroBtnVal[i] === "") {
+            document.querySelector('.showIfMacrosFilled').style.display = "none";
+        }
+        console.log(macroBtnVal[i]);
+    }
+    updtSzOnLoad();
+}
+
 let macroCnt = 0;
 document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena eilute su 10 macrosu presetu, kurie switchina. Isviso 100tukas kad butu
     macroCnt++;
@@ -140,7 +151,8 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
                     valToSave.push(valToSavePair);
                 }
                 window.ipcRender.send('saveSettings', "macroSettings", valToSave);
-            })
+                checkMacroRow();
+            });
         } else {
             if (connectBtn.className == "col btn btn-outline-success") {
                 showPopup("Communication Error", "Not connected");
@@ -160,6 +172,7 @@ window.ipcRender.invoke('requestSettings', 'macroSettings').then( (args) => {
         document.getElementById(`Macro-${i + 1}`).textContent = args[i][0];
         macroBtnVal[i] = args[i][1];
     }
+    checkMacroRow();
 });
 
 openFiltersBtn.addEventListener('click', () => {
