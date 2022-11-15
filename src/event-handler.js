@@ -143,6 +143,10 @@ ipcMain.on('saveSettings', (event, args) => {
             break;
         case "lastUsedPort":
             fileObj.lastUsedPort = args[1];
+            break;
+        case "lastUsedFont":
+            fileObj.lastUsedFont = args[1];
+            break;
         default:
             break;
     }
@@ -170,6 +174,8 @@ ipcMain.handle('requestSettings', (event, args) => {
             case "lastUsedPort":
                 resolve(fileContent.lastUsedPort);
                 break;
+            case "lastUsedFont":
+                resolve(fileContent.lastUsedFont);
             default:
                 break;
         }
