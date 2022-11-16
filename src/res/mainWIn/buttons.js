@@ -123,9 +123,11 @@ sendMsgBtn.addEventListener('click', () => {
 
 const checkMacroRow = () => {
     document.querySelector('.showIfMacrosFilled').style.display = "";
-    for (let i = 0; i < 10; i++) {
-        if (macroBtnVal[i] == null || macroBtnVal[i] === "") {
+    for (let i = 0; i < document.querySelectorAll('.macroBtn').length; i++) {
+        if ((macroBtnVal[i] == null || macroBtnVal[i] === "") && (i < (document.getElementById('macroExpansionControl')).querySelectorAll('.macroBtn').length)) {
             document.querySelector('.showIfMacrosFilled').style.display = "none";
+        } else if ((macroBtnVal[i] != null && macroBtnVal[i] !== "") && (i > (document.getElementById('macroExpansionControl')).querySelectorAll('.macroBtn').length)) {
+            document.querySelector('.showIfMacrosFilled').style.display = "";
         }
     }
     updtSzOnLoad();
@@ -150,6 +152,14 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
                     valToSave.push(valToSavePair);
                 }
                 window.ipcRender.send('saveSettings', "macroSettings", valToSave);
+
+                if (macroBtnVal[(Number(btn.id.slice(6)) - 1)] != null && macroBtnVal[(Number(btn.id.slice(6)) - 1)] != "") {
+                    btn.classList.remove("btn-outline-primary");
+                    btn.classList.add("btn-outline-info");
+                } else {
+                    btn.classList.remove("btn-outline-info");
+                    btn.classList.add("btn-outline-primary");
+                }
                 checkMacroRow();
             });
         } else {
@@ -166,11 +176,20 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
 let macroBtnVal = new Array(macroCnt);
 
 window.ipcRender.invoke('requestSettings', 'macroSettings').then( (args) => {
-    if (args == null) return;
+    if (args == null) {
+        checkMacroRow();
+        return;
+    }
     for (let i = 0; i < args.length; i++) {
         document.getElementById(`Macro-${i + 1}`).textContent = args[i][0];
         macroBtnVal[i] = args[i][1];
     }
+    document.querySelectorAll(".macroBtn").forEach( (btn) => {
+        if (macroBtnVal[(Number(btn.id.slice(6)) - 1)] != null && macroBtnVal[(Number(btn.id.slice(6)) - 1)] != "") {
+            btn.classList.remove("btn-outline-primary");
+            btn.classList.add("btn-outline-info");
+        }
+    });
     checkMacroRow();
 });
 
