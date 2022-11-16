@@ -129,6 +129,8 @@ ipcMain.on('saveSettings', (event, args) => {
         filters: null,
         macros: null,
         lastUsedPort: null,
+        lasUsedSerPort: null,
+        lasUsedSerBaud: null,
     };
     try {
         fileCont = JSON.parse(fileHandler.readFile(settingsFile));
@@ -152,6 +154,12 @@ ipcMain.on('saveSettings', (event, args) => {
             break;
         case "lastUsedFont":
             fileObj.lastUsedFont = args[1];
+            break;
+        case "lastUsedSerPort":
+            fileObj.lasUsedSerPort = args[1];
+            break;
+        case "lastUsedSerBaud":
+            fileObj.lasUsedSerBaud = args[1];
             break;
         default:
             break;
@@ -182,6 +190,13 @@ ipcMain.handle('requestSettings', (event, args) => {
                 break;
             case "lastUsedFont":
                 resolve(fileContent.lastUsedFont);
+                break;
+            case "lastUsedSerPort":
+                resolve(fileContent.lasUsedSerPort);
+                break;
+            case "lastUsedSerBaud":
+                resolve(fileContent.lasUsedSerBaud);
+                break;
             default:
                 break;
         }

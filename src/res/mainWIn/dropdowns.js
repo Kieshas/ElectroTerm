@@ -2,6 +2,8 @@ const portDD = document.getElementById('portDropDown');
 const portDDcontent = document.getElementById('portDDcontent');
 const macroDD = document.getElementById('macroDD');
 const macroDDContent = document.getElementById('macroDDContent');
+const baudDD = document.getElementById('baudDropDown');
+const fontDD = document.getElementById('fontDropDown');
 
 let port = null;
 let baud = null;
@@ -10,20 +12,14 @@ let workMode = "SERIAL ";
 document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
         baud = a.text;
-        document.getElementById('baudDropDown').textContent = baud;
+        baudDD.textContent = baud;
+        window.ipcRender.send('saveSettings', "lastUsedSerBaud", baud);
     })
-});
-
-window.ipcRender.invoke('requestSettings', 'lastUsedFont').then( (args) => {
-    if (args == null) return;
-    document.getElementById('fontDropDown').textContent = "Font: " + args;
-    output.style.fontSize = args;
-    outputFiltered.style.fontSize = args;
 });
 
 document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
-        document.getElementById('fontDropDown').textContent = "Font: " + a.text;
+        fontDD.textContent = "Font: " + a.text;
         output.style.fontSize = a.text;
         outputFiltered.style.fontSize = a.text;
         window.ipcRender.send('saveSettings', "lastUsedFont", a.text);
@@ -39,10 +35,30 @@ document.querySelectorAll(".mode a").forEach( a => {
     });
 });
 
+window.ipcRender.invoke('requestSettings', 'lastUsedFont').then( (args) => {
+    if (args == null) return;
+    fontDD.textContent = "Font: " + args;
+    output.style.fontSize = args;
+    outputFiltered.style.fontSize = args;
+});
+
+window.ipcRender.invoke('requestSettings', 'lastUsedSerPort').then( (args) => {
+    if (args == null) return;
+    portDD.textContent = args;
+    port = args;
+});
+
+window.ipcRender.invoke('requestSettings', 'lastUsedSerBaud').then( (args) => {
+    if (args == null) return;
+    baudDD.textContent = args;
+    baud = args;
+});
+
 const PortDDclickEvent = (name) => {
     port = name;
     document.getElementById('portDropDown').textContent = name;
     disconnectPort();
+    window.ipcRender.send('saveSettings', "lastUsedSerPort", port);
 }
 
 const registerDDItems = (selName, DDToFill, clickFn) => {
