@@ -14,7 +14,13 @@ const tcpHandler = new TCPHandler((data) => { portHandler.parserEvt(data); });
 
 ipcMain.handle('populateDD', () => {
     return new Promise((resolve) => {
-        resolve(portHandler.PortList());
+        let portArr = new Array;
+        portHandler.PortList().then((result) => {
+            result.forEach((port) => {
+                portArr.push(port.path);
+            })
+            resolve(portArr);
+        })
     });
 });
 

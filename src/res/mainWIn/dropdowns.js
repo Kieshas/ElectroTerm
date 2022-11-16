@@ -39,69 +39,45 @@ document.querySelectorAll(".mode a").forEach( a => {
     });
 });
 
-const GetPopulatedDD = async () => {
-    const content = await window.ipcRender.invoke('populateDD');
-    return content;
-};
+const PortDDclickEvent = (name) => {
+    port = name;
+    document.getElementById('portDropDown').textContent = name;
+    disconnectPort();
+}
 
-const PortDDclickEvent = (element) => {
-    element.addEventListener("click", () => {
-        port = element.text;
-        document.getElementById('portDropDown').textContent = port;
-        disconnectPort();
+const registerDDItems = (selName, DDToFill, clickFn) => {
+    let li = document.createElement("li");
+    let link = document.createElement("a");
+    let text = document.createTextNode(selName);
+    link.appendChild(text);
+    link.className = "dropdown-item";
+    link.href = "#";
+    link.addEventListener("click", clickFn);
+    li.appendChild(link);
+    DDToFill.appendChild(li);
+}
+
+const handleDropDown = (requestMsg, DDToFill, clickFn) => {
+    window.ipcRender.invoke(requestMsg).then((args) => {
+        if (DDToFill != null) {
+            while (DDToFill.firstChild) {
+                DDToFill.removeChild(DDToFill.firstChild);
+            }
+        }
+        args.forEach( (arg) => {
+            registerDDItems(arg, DDToFill, () => {clickFn(arg)});
+        });
+    }).catch( (err) => {
+        err = err.toString();
+        const unNeededStr = requestMsg + ":";
+        showPopup("Read error", err.substr(err.indexOf(unNeededStr) + unNeededStr.length));
     });
 }
 
 portDD.addEventListener('show.bs.dropdown', () => {
-    if (portDDcontent != null) {
-        while (portDDcontent.firstChild) {
-            portDDcontent.removeChild(portDDcontent.firstChild);
-        }
-    }
-    let result = GetPopulatedDD();
-
-    result.then ((portContent) => {
-        if (portContent == null) {
-            portDDcontent.empty();
-        } else {
-            portContent.forEach(port => {
-                let li = document.createElement("li");
-                let link = document.createElement("a");
-                let text = document.createTextNode(port.path);
-                link.appendChild(text);
-                link.className = "dropdown-item";
-                link.href = "#";
-                PortDDclickEvent(link);
-                li.appendChild(link);
-                portDDcontent.appendChild(li);
-            });
-        }
-    });
+    handleDropDown('populateDD', portDDcontent, (arg) => {PortDDclickEvent(arg);});
 });
 
 macroDD.addEventListener('show.bs.dropdown', () => {
-    window.ipcRender.invoke('requestMacros').then((args) => {
-        if (macroDDContent != null) {
-            while (macroDDContent.firstChild) {
-                macroDDContent.removeChild(macroDDContent.firstChild);
-            }
-        }
-        args.forEach( (arg) => {
-            let li = document.createElement("li");
-            let link = document.createElement("a");
-            let text = document.createTextNode(arg);
-            link.appendChild(text);
-            link.className = "dropdown-item";
-            link.href = "#";
-            link.addEventListener("click", () => {
-                sendMsgText.value = link.textContent;
-            });
-            li.appendChild(link);
-            macroDDContent.appendChild(li);
-        });
-    }).catch( (err) => {
-        err = err.toString();
-        const unNeededStr = "'requestMacros':";
-        showPopup("Read error", err.substr(err.indexOf(unNeededStr) + unNeededStr.length));
-    });
+    handleDropDown('requestMacros', macroDDContent, (arg) => {sendMsgText.value = arg;});
 });
