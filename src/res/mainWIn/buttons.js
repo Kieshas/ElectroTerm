@@ -121,7 +121,7 @@ sendMsgBtn.addEventListener('click', () => {
     sendMsg(sendMsgText.value);
 })
 
-const checkMacroRow = () => {
+const updateMacroRows = () => {
     document.querySelector('.showIfMacrosFilled').style.display = "";
     for (let i = 0; i < document.querySelectorAll('.macroBtn').length; i++) {
         if ((macroBtnVal[i] == null || macroBtnVal[i] === "") && (i < (document.getElementById('macroExpansionControl')).querySelectorAll('.macroBtn').length)) {
@@ -131,6 +131,22 @@ const checkMacroRow = () => {
         }
     }
     updtSzOnLoad();
+}
+
+const activateMacro = () => {
+    try {
+        document.querySelectorAll(".macroBtn").forEach( (btn) => {
+            if (macroBtnVal[(Number(btn.id.slice(6)) - 1)] != null && macroBtnVal[(Number(btn.id.slice(6)) - 1)] != "") {
+                btn.classList.remove("btn-outline-primary");
+                btn.classList.add("btn-outline-info");
+            } else {
+                btn.classList.remove("btn-outline-info");
+                btn.classList.add("btn-outline-primary");
+            }
+        });
+    } catch {
+
+    }
 }
 
 let macroCnt = 0;
@@ -152,15 +168,8 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
                     valToSave.push(valToSavePair);
                 }
                 window.ipcRender.send('saveSettings', "macroSettings", valToSave);
-
-                if (macroBtnVal[(Number(btn.id.slice(6)) - 1)] != null && macroBtnVal[(Number(btn.id.slice(6)) - 1)] != "") {
-                    btn.classList.remove("btn-outline-primary");
-                    btn.classList.add("btn-outline-info");
-                } else {
-                    btn.classList.remove("btn-outline-info");
-                    btn.classList.add("btn-outline-primary");
-                }
-                checkMacroRow();
+                activateMacro();
+                updateMacroRows();
             });
         } else {
             if (connectBtn.className == "col btn btn-outline-success") {
@@ -177,20 +186,15 @@ let macroBtnVal = new Array(macroCnt);
 
 window.ipcRender.invoke('requestSettings', 'macroSettings').then( (args) => {
     if (args == null) {
-        checkMacroRow();
+        updateMacroRows();
         return;
     }
     for (let i = 0; i < args.length; i++) {
         document.getElementById(`Macro-${i + 1}`).textContent = args[i][0];
         macroBtnVal[i] = args[i][1];
     }
-    document.querySelectorAll(".macroBtn").forEach( (btn) => {
-        if (macroBtnVal[(Number(btn.id.slice(6)) - 1)] != null && macroBtnVal[(Number(btn.id.slice(6)) - 1)] != "") {
-            btn.classList.remove("btn-outline-primary");
-            btn.classList.add("btn-outline-info");
-        }
-    });
-    checkMacroRow();
+    activateMacro();
+    updateMacroRows();
 });
 
 openFiltersBtn.addEventListener('click', () => {
