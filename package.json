@@ -16,7 +16,7 @@
     "name": "Kestutis Frankonis",
     "email": "kestutis.frankonis@ruptela.com"
   },
-  "license": "MIT",
+  "license": "GPL-3.0",
   "config": {
     "forge": {
       "packagerConfig": {},

@@ -2,13 +2,20 @@ const output = document.getElementById('output');
 const outputFiltered = document.getElementById('outputFiltered');
 
 let lineCount = 0;
-let lineCountFiltered = 0;
+let lineCountFlt = 0;
+let countForSlicing = 0;
+let countForSlicingFlt = 0;
+let lineCntNoScroll = 0;
+let lineCntNoScrollFlt = 0;
 
 const ClearOutputs = () => {
     output.textContent = "";
     outputFiltered.textContent = "";
     lineCount = 0;
-    lineCountFiltered = 0;
+    lineCountFlt = 0;
+    countForSlicing = 0;
+    lineCntNoScroll = 0;
+    lineCntNoScrollFlt = 0;
 }
 
 const asciiToHex = (str) => { // needs some more attention. Kid of works and not in need of immediate attention
@@ -28,19 +35,64 @@ const getCurrDate = () => {
     return correctCurDate;
 }
 
-let lineCntNoScroll = 0;
-const outputLine = (line) => {
-    let textTemp;
-    if (lineCount >= 1000) {
-        if (lockCb.checked) {
-            lineCntNoScroll++;
-        } else {
-            for (let i = 0; i <= lineCntNoScroll; i++) {
-                textTemp = output.innerHTML.slice(output.innerHTML.indexOf('\n') + 1);
-                output.innerHTML = textTemp;
+const scrollToBottom = () => {
+    output.scrollTop = output.scrollHeight;
+    outputFiltered.scrollTop = output.scrollHeight;
+}
+
+const sliceNumOfLines = (element, lineNum) => {
+    let lastIdx = 0;
+    for (let i = 0; i < lineNum; i++) {
+        lastIdx = element.innerHTML.indexOf('\n', lastIdx) + 1;
+    }
+    element.innerHTML = element.innerHTML.slice(lastIdx);
+    scrollToBottom();
+    return 0;
+}
+
+const slicerCheck = (elementToCheck) => {
+    switch (elementToCheck) {
+        case "FilteredOutput":
+            if (lockCb.checked) {
+                lineCntNoScrollFlt++;
+            } else {
+                countForSlicingFlt++;
+                if (lineCntNoScrollFlt != 0) {
+                    lineCntNoScrollFlt = sliceNumOfLines(outputFiltered, lineCntNoScrollFlt);
+                }
+                if (countForSlicingFlt > 50) {
+                    countForSlicingFlt = sliceNumOfLines(outputFiltered, countForSlicingFlt);
+                }
             }
-            lineCntNoScroll = 0;
-        }
+            break;
+        case "RegularOutput":
+            if (lockCb.checked) {
+                lineCntNoScroll++;
+                if (lineCntNoScroll >= 2000) {
+                    scrollToBottom(); // let's be safe because it is possible to break app with overflow here
+                    if (lineCntNoScroll == 2000) {
+                        showPopup("Warning", "Scrolling action was held for too long, clearing");
+                    }
+                }
+            } else {
+                countForSlicing++;
+                if (lineCntNoScroll != 0) {
+                    lineCntNoScroll = sliceNumOfLines(output, lineCntNoScroll);
+                }
+                if (countForSlicing > 50) {
+                    countForSlicing = sliceNumOfLines(output, countForSlicing);
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+const outputLine = (line) => {
+    
+    if (lineCount >= 200) {
+        slicerCheck("RegularOutput");
     } else {
         lineCount++;
     }
@@ -52,31 +104,21 @@ const outputLine = (line) => {
     }
 
     if (!lockCb.checked) {
-        output.scrollTop = output.scrollHeight;
-        outputFiltered.scrollTop = output.scrollHeight;
+        scrollToBottom();
     }
 }
 
-let lineCntNoScrollFlt = 0;
+
 const outputFilteredLine = (line) => {
-    let textTemp;
-    if (lineCountFiltered >= 1000) {
-        if (lockCb.checked) {
-            lineCntNoScrollFlt++;
-        } else {
-            for (let i = 0; i <= lineCntNoScrollFlt; i++) {
-                textTemp = outputFiltered.innerHTML.slice(outputFiltered.innerHTML.indexOf('\n') + 1);
-                outputFiltered.innerHTML = textTemp;
-            }
-            lineCntNoScrollFlt = 0;
-        }
+    if (lineCountFlt >= 200) {
+        slicerCheck("FilteredOutput");
     } else {
-        lineCountFiltered++;
+        lineCountFlt++;
     }
     outputFiltered.innerHTML += (line);
 }
 
-window.ipcRender.receive('printLn', (line) => outputLine(line));
+window.ipcRender.receive('printLn', (line) => outputLine(line)); // maybe it is possible in the future to somehow "bundle" lines so they wouldn't be sent 1 by 1. that way we would save on so much ipc resource
 
 window.ipcRender.receive('printFilteredLn', (line) => outputFilteredLine(line));
 
