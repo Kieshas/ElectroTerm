@@ -5,6 +5,7 @@ const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
 const openFiltersBtn = document.getElementById('openFiltersBtn');
 const sendMsgText = document.getElementById('sendMsgText');
+const sendMsgTmo = document.getElementById('sendTmo');
 
 const disconnectPort = () => {
     switch (workMode) {
@@ -113,12 +114,37 @@ const sendMsg = (msg) => {
     outputLine(msg + '\r\n');
 }
 
+let stopContinuous = true;
+const sendMsgContinuous = (msg) => {
+    if (stopContinuous) return;
+    window.ipcRender.send('sendMsg', msg);
+    outputLine(msg + '\r\n');
+    setTimeout(() => {sendMsgContinuous(msg)}, Number(sendMsgTmo.value, 10));
+}
+
+const timeoutSendMagic = (msgToSend) => {
+    if ((sendMsgTmo.value != "" && sendMsgTmo.value != 0) && sendMsgBtn.classList.contains('btn-outline-secondary')) {
+        sendMsgBtn.textContent = "Stop";
+        sendMsgBtn.classList.remove('btn-outline-secondary');
+        sendMsgBtn.classList.add('btn-outline-danger');
+        stopContinuous = false;
+        sendMsgContinuous(msgToSend)
+    } else if (sendMsgTmo.value != "" && sendMsgTmo.value != 0) { // turn off periodical send
+        sendMsgBtn.classList.remove('btn-outline-danger');
+        sendMsgBtn.classList.add('btn-outline-secondary');
+        sendMsgBtn.textContent = "Send";
+        stopContinuous = true;
+    } else {
+        sendMsg(msgToSend);
+    }
+}
+
 sendMsgBtn.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
         return;
     }
-    sendMsg(sendMsgText.value);
+    timeoutSendMagic(sendMsgText.value);
 })
 
 sendMsgText.addEventListener('keypress', (event) => {
@@ -127,7 +153,7 @@ sendMsgText.addEventListener('keypress', (event) => {
             showPopup("Communication Error", "Not connected");
             return;
         }
-        sendMsg(sendMsgText.value);
+        timeoutSendMagic(sendMsgText.value);
     }
 });
 

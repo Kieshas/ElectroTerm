@@ -194,8 +194,11 @@
 
         <div class="row mb-1 collapsableRow">
           <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn" id="sendMsgText" style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 0;">
-          <button type="button" class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn" style="border-radius: 0; border-right-width: 0;">Send</button>
-          <button type="button" class="col-auto btn btn-outline-secondary darkBtn dropup dropdown-toggle dropdown-toggle-split" id="macroDD" data-bs-toggle="dropdown" aria-expanded="false" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+          <div class="col-2 col-xl-1 g-0">
+            <input type="text" class="form-control" id="sendTmo" style="border-radius: 0; border-right-width: 0;" placeholder="Send TMO" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
+          </div>
+          <button type="button" class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn" style="border-radius: 0;">Send</button>
+          <button type="button" class="col-auto btn btn-outline-secondary darkBtn dropup dropdown-toggle dropdown-toggle-split" id="macroDD" data-bs-toggle="dropdown" aria-expanded="false" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-left-width: 0;">
             <span class="visually-hidden">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end" id="macroDDContent" style="font-size: 10px; overflow-y: scroll;"> </ul>
