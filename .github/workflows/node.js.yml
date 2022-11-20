@@ -31,5 +31,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ElectroTermAPP
-        path: out/make/squirrel.windows/x64
+        path: out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip
         retention-days: 1
