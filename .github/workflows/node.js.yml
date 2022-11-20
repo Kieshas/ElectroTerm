@@ -17,8 +17,16 @@ jobs:
       matrix:
         node-version: [16.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        name: [ElectroTermWin, ElectroTermLinux, ElectroTermMac]
-        path: [out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip, out/make/deb/x64/electoterm_1.0.0_amd64.deb, out/make/zip/darwin/x64/ElectoTerm-win32-x64-1.0.0.zip]
+        include:
+          -os: windows-latest
+          name: ElectroTermWin
+          path: out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip
+          -os: ubuntu-latest
+          name: ElectroTermLinux
+          path: out/make/deb/x64/electoterm_1.0.0_amd64.deb
+          -os: ubuntu-latest
+          name: ElectroTermMac
+          path: out/make/zip/darwin/x64/ElectoTerm-win32-x64-1.0.0.zip
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     runs-on: ${{ matrix.os }}
     steps:
