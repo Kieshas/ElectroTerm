@@ -51,6 +51,7 @@ darkModeCb.addEventListener('click', () => {
 rtsCb.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
+        rtsCb.checked = false;
         return;
     }
     
@@ -60,6 +61,7 @@ rtsCb.addEventListener('click', () => {
 dtrCb.addEventListener('click', () => {
     if (connectBtn.className == "col btn btn-outline-success") {
         showPopup("Communication Error", "Not connected");
+        dtrCb.checked = false;
         return;
     }
     
