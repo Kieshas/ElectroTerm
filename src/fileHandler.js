@@ -85,6 +85,7 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
     }
     #getCurrDate(format) {
         const currDate = new Date();
+        currDate.setHours(currDate.getHours() - (currDate.getTimezoneOffset() / 60));
         let correctCurDate;
         if (format == 'file') {
             correctCurDate = currDate.toJSON().slice(0, 10) + '_';
