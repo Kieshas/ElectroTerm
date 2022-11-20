@@ -17,33 +17,8 @@ jobs:
       matrix:
         node-version: [16.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        name: [ElectroTermWin, ElectroTermLinux, ElectroTermMac]
-        path: [out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip, out/make/deb/x64/electoterm_1.0.0_amd64.deb, out/make/zip/darwin]
-        exclude: 
-          -os: windows-latest
-          name: ElectroTermLinux
-          -os: windows-latest
-          name: ElectroTermMac
-          -os: windows-latest
-          path: out/make/deb/x64/electoterm_1.0.0_amd64.deb
-          -os: windows-latest
-          path: out/make/zip/darwin
-          -os: ubuntu-latest
-          name: ElectroTermWin
-          -os: ubuntu-latest
-          name: ElectroTermMac
-          -os: ubuntu-latest
-          path: out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip
-          -os: ubuntu-latest
-          path: out/make/zip/darwin
-          -os: macos-latest
-          name: ElectroTermWin
-          -os: macos-latest
-          name: ElectroTermLinux
-          -os: macos-latest
-          path: out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip
-          -os: macos-latest
-          path: out/make/deb/x64/electoterm_1.0.0_amd64.deb
+        # name: [ElectroTermWin, ElectroTermLinux, ElectroTermMac]
+        # path: [out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip, out/make/deb/x64/electoterm_1.0.0_amd64.deb, out/make/zip/darwin]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     runs-on: ${{ matrix.os }}
     steps:
@@ -58,6 +33,6 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ matrix.name }}
-        path: ${{ matrix.path }}
+        name: ElectroTerm${{matrix.os}}
+        path: out/make
         retention-days: 1
