@@ -28,7 +28,6 @@ jobs:
           path: out/make/deb/x64/electoterm_1.0.0_amd64.deb
           -os: windows-latest
           path: out/make/zip/darwin
-
           -os: ubuntu-latest
           name: ElectroTermWin
           -os: ubuntu-latest
@@ -37,7 +36,6 @@ jobs:
           path: out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip
           -os: ubuntu-latest
           path: out/make/zip/darwin
-
           -os: macos-latest
           name: ElectroTermWin
           -os: macos-latest
