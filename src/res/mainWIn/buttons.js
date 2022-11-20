@@ -121,6 +121,16 @@ sendMsgBtn.addEventListener('click', () => {
     sendMsg(sendMsgText.value);
 })
 
+sendMsgText.addEventListener('keypress', (event) => {
+    if (event.key === "Enter") {
+        if (connectBtn.className == "col btn btn-outline-success") {
+            showPopup("Communication Error", "Not connected");
+            return;
+        }
+        sendMsg(sendMsgText.value);
+    }
+});
+
 const updateMacroRows = () => {
     document.querySelector('.showIfMacrosFilled').style.display = "";
     for (let i = 0; i < document.querySelectorAll('.macroBtn').length; i++) {
