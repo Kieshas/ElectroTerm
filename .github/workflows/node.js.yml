@@ -33,6 +33,6 @@ jobs:
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: ElectroTerm${{matrix.os}}
+        name: ElectroTerm-${{matrix.os}}
         path: out/make
         retention-days: 1
