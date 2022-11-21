@@ -104,3 +104,14 @@ output.addEventListener('mousedown', (event) => {
     }
 });
 
+outputFiltered.addEventListener('mouseout', (event) => {
+    if (event.toElement != output) {
+        ritualAfterDrag();
+    }
+});
+
+output.addEventListener('mouseout', (event) => {
+    if (event.toElement != outputFiltered) {
+        ritualAfterDrag();
+    }
+});
