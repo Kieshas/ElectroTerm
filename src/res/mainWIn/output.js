@@ -97,7 +97,7 @@ const outputLine = (line) => {
         lineCount++;
     }
 
-    if (line.includes('<mark')) { // reduce DOM reloads
+    if (line.includes('<span')) { // reduce DOM reloads
         output.innerHTML += (line);
     } else {
         output.append(line + '\n');

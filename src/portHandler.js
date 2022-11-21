@@ -57,7 +57,7 @@ class PortHandler {
                     const filterColor = filterPair[1];
                     const indexOfFilter = formattedLn.indexOf(filterPair[0]);
                     const textColor = this.#getTextColor(filterPair[1]);
-                    formattedLn = formattedLn.slice(0, indexOfFilter) + `<mark style="background-color: ${filterColor}; color: ${textColor}">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</mark>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
+                    formattedLn = formattedLn.slice(0, indexOfFilter) + `<span style="background-color: ${filterColor}; color: ${textColor}; padding: 0.2rem">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</span>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
                     filterMatched = true;
                 }
             });
