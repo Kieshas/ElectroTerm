@@ -147,7 +147,7 @@ sendMsgBtn.addEventListener('click', () => {
     timeoutSendMagic(sendMsgText.value);
 })
 
-sendMsgText.addEventListener('keypress', (event) => {
+sendMsgText.addEventListener('keydown', (event) => {
     if (event.key === "Enter") {
         if (connectBtn.className == "col btn btn-outline-success") {
             showPopup("Communication Error", "Not connected");

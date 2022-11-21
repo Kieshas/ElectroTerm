@@ -70,13 +70,16 @@ const addNewRow = ({textVal, colorVal}) => {
                 document.getElementById(rows[arrIdx].id).remove();
                 rows = rows.filter(item => item !== args.path[1]);
                 this.removeEventListener('click', fn, false);
+            } else {
+                document.getElementById(`filterText${rowIdx}`).value = null;
+                document.getElementById(`filterColor${rowIdx}`).value = null;
             }
             // window.scrollTo(0, document.body.scrollHeight);
         }
     });
 }
 
-saveBtn.addEventListener('click', () => {
+const saveAction = () => {
     let pairsToSave = new Array();
     document.querySelectorAll('.textCntnt').forEach((args) => {
         let pair = new Array();
@@ -87,6 +90,10 @@ saveBtn.addEventListener('click', () => {
     });
     window.ipcRender.send('saveSettings', "filterSettings", pairsToSave);
     window.close();
+}
+
+saveBtn.addEventListener('click', () => {
+    saveAction();
 });
 
 closeBtn.addEventListener('click', () => {
@@ -118,5 +125,11 @@ window.ipcRender.invoke('filtersLoaded').then((args) => {
         filters.forEach( (filter) => {
             addNewRow({textVal: filter[0], colorVal: filter[1]});
         })
+    }
+});
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === "Enter") {
+        saveAction();
     }
 });
