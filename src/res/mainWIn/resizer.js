@@ -53,7 +53,6 @@ const preventSelection = (evt) => {
 const adjustProportions = () => {
     outputProportion = getSizeInDec(output) / (getSizeInDec(outputFiltered) + getSizeInDec(output));
     outputFilteredProportion = getSizeInDec(outputFiltered) / (getSizeInDec(outputFiltered) + getSizeInDec(output));
-    console.log("propsOp " + outputProportion + " propsOpFl " + outputFilteredProportion);
 }
 
 const ritualBeforeDrag = () => {
