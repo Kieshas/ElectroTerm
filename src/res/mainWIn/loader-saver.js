@@ -86,7 +86,7 @@ const macroBtnSaver = () => {
     for(let i = 0; i < macroBtnVal.length; i++) {
         let valToSavePair = new Array;
         valToSavePair.push(document.getElementById(`Macro-${i + 1}`).textContent);
-        valToSavePair.push(macroBtnVal[i]);
+        valToSavePair.push(macroBtnVal[i] === "" ? null : macroBtnVal[i]);
         valToSave.push(valToSavePair);
     }
     window.ipcRender.invoke('saveSettings', "macroSettings", valToSave);
