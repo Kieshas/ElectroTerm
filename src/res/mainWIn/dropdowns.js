@@ -7,22 +7,22 @@ const fontDD = document.getElementById('fontDropDown');
 
 let port = null;
 let baud = null;
+let currFont = null;
 let workMode = "SERIAL ";
 
 document.querySelectorAll(".baud a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
         baud = a.text;
         baudDD.textContent = baud;
-        window.ipcRender.send('saveSettings', "lastUsedSerBaud", baud);
     })
 });
 
 document.querySelectorAll(".font a").forEach( a => { // runs one time at startup
     a.addEventListener("click", () => {
         fontDD.textContent = "Font: " + a.text;
-        output.style.fontSize = a.text;
-        outputFiltered.style.fontSize = a.text;
-        window.ipcRender.send('saveSettings', "lastUsedFont", a.text);
+        currFont = a.text;
+        output.style.fontSize = currFont;
+        outputFiltered.style.fontSize = currFont;
     })
 });
 
@@ -35,30 +35,10 @@ document.querySelectorAll(".mode a").forEach( a => {
     });
 });
 
-window.ipcRender.invoke('requestSettings', 'lastUsedFont').then( (args) => {
-    if (args == null) return;
-    fontDD.textContent = "Font: " + args;
-    output.style.fontSize = args;
-    outputFiltered.style.fontSize = args;
-});
-
-window.ipcRender.invoke('requestSettings', 'lastUsedSerPort').then( (args) => {
-    if (args == null) return;
-    portDD.textContent = args;
-    port = args;
-});
-
-window.ipcRender.invoke('requestSettings', 'lastUsedSerBaud').then( (args) => {
-    if (args == null) return;
-    baudDD.textContent = args;
-    baud = args;
-});
-
 const PortDDclickEvent = (name) => {
     port = name;
     document.getElementById('portDropDown').textContent = name;
     disconnectPort();
-    window.ipcRender.send('saveSettings', "lastUsedSerPort", port);
 }
 
 const registerDDItems = (selName, DDToFill, clickFn) => {

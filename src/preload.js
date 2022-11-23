@@ -14,14 +14,15 @@ const ipc = {
             'hexCheck',
             'sendMsg',
             'openFilters',
-            'saveSettings',
             'closeServer',
+            'safeToClose',
         ],
         // From main to render.
         'receive': [
             'resizeEvt',
             'printLn',
             'printFilteredLn',
+            'onCloseEvt',
         ],
         // From render to main and back again.
         'sendReceive': [
@@ -30,6 +31,7 @@ const ipc = {
             'setPrmsAndConnect',
             'selectFile',
             'filtersLoaded',
+            'saveSettings',
             'requestSettings',
             'openServer',
             'requestMacros',

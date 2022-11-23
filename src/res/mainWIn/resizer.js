@@ -36,8 +36,6 @@ const updtSzOnLoad = async () => {
     resizeOutput(size);
 };
 
-updtSzOnLoad();
-
 // Custom drag based resizer for bootstrap collumn based text output elements
 const offsetThr = 15;
 let clicked = false;

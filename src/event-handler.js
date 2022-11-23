@@ -122,54 +122,84 @@ ipcMain.on('openFilters', (event, args) => {
     });
 });
 
-ipcMain.on('saveSettings', (event, args) => {
-    let destination = args[0];
-    let fileCont;
-    let fileObj = {
-        filters: null,
-        macros: null,
-        lastUsedPort: null,
-        lasUsedSerPort: null,
-        lasUsedSerBaud: null,
-    };
-    try {
-        fileCont = JSON.parse(fileHandler.readFile(settingsFile));
-    } catch {
-        fileCont = null;
-    }
-    if (fileCont != null) { // not sure if this will work with more settings. For a later date
-        fileObj = fileCont;
-    }
+const SaveSettings = (dst, settingVal) => {
+    return new Promise((resolve) => {
+        let destination = dst;
+        let fileCont;
+        let fileObj = {
+            filters: null,
+            macros: null,
+            lastUsedPort: null,
+            lasUsedSerPort: null,
+            lasUsedSerBaud: null,
+            proportionOutput: null,
+            proportionOutputFl: null,
+            winPosX: null,
+            winPosY: null,
+            winSizeX: null,
+            winSizeY: null,
+            winMaximized: null,
+        };
+        try {
+            fileCont = JSON.parse(fileHandler.readFile(settingsFile));
+        } catch {
+            fileCont = null;
+        }
+        if (fileCont != null) { // not sure if this will work with more settings. For a later date
+            fileObj = fileCont;
+        }
+    
+        switch (destination) {
+            case "filterSettings":
+                fileObj.filters = settingVal;
+                portHandler.updateFilters(fileObj.filters);
+                break;
+            case "macroSettings":
+                fileObj.macros = settingVal;
+                break;
+            case "lastUsedPort":
+                fileObj.lastUsedPort = settingVal;
+                break;
+            case "lastUsedFont":
+                fileObj.lastUsedFont = settingVal;
+                break;
+            case "lastUsedSerPort":
+                fileObj.lasUsedSerPort = settingVal;
+                break;
+            case "lastUsedSerBaud":
+                fileObj.lasUsedSerBaud = settingVal;
+                break;
+            case "proportionOutput":
+                fileObj.proportionOutput = settingVal;
+                break;
+            case "proportionOutputFl":
+                fileObj.proportionOutputFl = settingVal;
+                break;
+            case "winPosX":
+                fileObj.winPosX = settingVal;
+                break;
+            case "winPosY":
+                fileObj.winPosY = settingVal;
+                break;
+            case "winSizeX":
+                fileObj.winSizeX = settingVal;
+                break;
+            case "winSizeY":
+                fileObj.winSizeY = settingVal;
+                break;
+            case "maximized":
+                fileObj.winMaximized = settingVal;
+                break;
+            default:
+                break;
+        }
+        fileHandler.writeFile(settingsFile, "");
+        fileHandler.appendFile(settingsFile, (JSON.stringify(fileObj, null, 4)));
+        resolve();
+    })
+}
 
-    switch (destination) {
-        case "filterSettings":
-            fileObj.filters = args[1];
-            portHandler.updateFilters(fileObj.filters);
-            break;
-        case "macroSettings":
-            fileObj.macros = args[1];
-            break;
-        case "lastUsedPort":
-            fileObj.lastUsedPort = args[1];
-            break;
-        case "lastUsedFont":
-            fileObj.lastUsedFont = args[1];
-            break;
-        case "lastUsedSerPort":
-            fileObj.lasUsedSerPort = args[1];
-            break;
-        case "lastUsedSerBaud":
-            fileObj.lasUsedSerBaud = args[1];
-            break;
-        default:
-            break;
-    }
-    fileHandler.writeFile(settingsFile, "");
-    fileHandler.appendFile(settingsFile, (JSON.stringify(fileObj, null, 4)));
-});
-
-ipcMain.handle('requestSettings', (event, args) => {
-    let destination = args[0];
+const LoadSettings = (dst) => {
     return new Promise((resolve) => {
         let fileContent = null;
         try {
@@ -178,7 +208,7 @@ ipcMain.handle('requestSettings', (event, args) => {
             fileContent = null;
             resolve(null);
         }
-        switch(destination) {
+        switch(dst) { // make key value MAP instead of this spaghetti in the future.
             case "filterSettings":
                 resolve(fileContent.filters);
                 break;
@@ -196,11 +226,40 @@ ipcMain.handle('requestSettings', (event, args) => {
                 break;
             case "lastUsedSerBaud":
                 resolve(fileContent.lasUsedSerBaud);
+                break;            
+            case "proportionOutput":
+                resolve(fileContent.proportionOutput);
+                break;
+            case "proportionOutputFl":
+                resolve(fileContent.proportionOutputFl);
+                break;
+            case "winPosX":
+                resolve(fileContent.winPosX);
+                break;
+            case "winPosY":
+                resolve(fileContent.winPosY);
+                break;
+            case "winSizeX":
+                resolve(fileContent.winSizeX);
+                break;
+            case "winSizeY":
+                resolve(fileContent.winSizeY);
+                break;
+            case "maximized":
+                resolve(fileContent.winMaximized);
                 break;
             default:
                 break;
         }
     });
+}
+
+ipcMain.handle('saveSettings', (event, args) => {
+    return SaveSettings(args[0], args[1]);
+});
+
+ipcMain.handle('requestSettings', (event, args) => {
+    return LoadSettings(args[0]);
 })
 
 ipcMain.handle('openServer', (event, args) => {
@@ -232,6 +291,15 @@ ipcMain.handle('requestMacros', () => {
         }
     })
 });
+
+ipcMain.on('safeToClose', () => {
+    mainWindow.close();
+});
+
+module.exports = {
+    SaveSettings,
+    LoadSettings,
+};
 
   //todo autoresponsus pagal tai ka mato terminale. Cool featuresas
   // spalvu filtra ir autoresponsus tiesiog padaryt viena ir tada pliusiukas dameta eilute ir taip iki begalybes ir pohui

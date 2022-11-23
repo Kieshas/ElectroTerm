@@ -88,7 +88,7 @@ const saveAction = () => {
             pairsToSave.push(pair);
         }
     });
-    window.ipcRender.send('saveSettings', "filterSettings", pairsToSave);
+    window.ipcRender.invoke('saveSettings', "filterSettings", pairsToSave);
     window.close();
 }
 

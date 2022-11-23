@@ -30,13 +30,12 @@ const updateViewPort = (wrkMode) => {
             }
             lastUpdate = wrkMode;
             connectBtn.textContent = "Open";
-            window.ipcRender.invoke('requestSettings', 'lastUsedPort').then( (args) => {
-                if (args == null) return;
-                TCPportInput.value = args;
-            });
             updtSzOnLoad();
             break;
         default:
             break;
     }
 }
+
+loadSettingsOnStart(); // LOAD everything
+updtSzOnLoad();

@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const ElectronPath = require('path');
 
-
+let safeToClose = false;
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // eslint-disable-next-line global-require
 if (require('electron-squirrel-startup')) {
@@ -35,8 +35,10 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
-  handleSize(mainWindow);
-  const eventHandler = require('./event-handler');
+  actionOnLoad().then(() => {
+    handleSize(mainWindow);
+  });
+  mainWindow.on('close', actionOnClose); // register evt after window creation
 };
 
 // This method will be called when Electron has finished
@@ -83,6 +85,62 @@ const createFilterWindow = () => {
   filterWindow.loadFile(ElectronPath.join(__dirname, 'filters.html'));
   return filterWindow;
 };
+
+const actionOnClose = (evt) => {
+  const { SaveSettings } = require('./event-handler');
+  if (!safeToClose) {
+    console.log("CloseEvt");
+    evt.preventDefault();
+    SaveSettings("winPosX", mainWindow.getPosition()[0]);
+    SaveSettings("winPosY", mainWindow.getPosition()[1]);
+    SaveSettings("winSizeX", mainWindow.getContentSize()[0]);
+    SaveSettings("winSizeY", mainWindow.getContentSize()[1]);
+    SaveSettings("maximized", mainWindow.isMaximized());
+    mainWindow.webContents.send('onCloseEvt');
+    safeToClose = true;
+  }
+}
+
+const actionOnLoad = () => {
+  const { LoadSettings } = require('./event-handler');
+  return new Promise((resolve) => {
+    let width;
+    let height;
+    let posX;
+    let posY;
+    let maximized;
+    LoadSettings("winSizeX").then((args) => { 
+      if (args != null) {
+        width = args;
+      }
+    LoadSettings("winSizeY").then((args) => { 
+      if (args != null) {
+        height = args;
+      }
+    LoadSettings("winPosX").then((args) => { 
+      if (args != null) {
+        posX = args;
+      }
+    LoadSettings("winPosY").then((args) => { 
+      if (args != null) {
+        posY = args;
+      }
+    LoadSettings("maximized").then((args) => { 
+      if (args != null) {
+        maximized = args;
+      }
+      if (width && height)  mainWindow.setContentSize(width, height);
+      if (posX && posY)     mainWindow.setPosition(posX, posY);
+      if (maximized)        mainWindow.maximize();
+      resolve();
+    });
+    });
+    });
+    });
+    });
+  })
+}
+
 //monitorius iosam arba siaip belekam bbz liveiodata
 // TCP kad skaityti RD
 getMainWin = () => mainWindow;
