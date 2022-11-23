@@ -15,9 +15,10 @@ const loadSettingsOnStart = () => {
     // LOAD last used font size
     window.ipcRender.invoke('requestSettings', 'lastUsedFont').then((args) => {
         if (args == null) return;
-        fontDD.textContent = "Font: " + args;
-        output.style.fontSize = args;
-        outputFiltered.style.fontSize = args;
+        currFont = args;
+        fontDD.textContent = "Font: " + currFont;
+        output.style.fontSize = currFont;
+        outputFiltered.style.fontSize = currFont;
     });
     // LOAD last used serial port
     window.ipcRender.invoke('requestSettings', 'lastUsedSerPort').then((args) => {
