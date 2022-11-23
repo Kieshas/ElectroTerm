@@ -123,7 +123,6 @@ window.ipcRender.receive('printLn', (line) => outputLine(line)); // maybe it is 
 window.ipcRender.receive('printFilteredLn', (line) => outputFilteredLine(line));
 
 output.addEventListener('scroll', () => {
-    // console.log(Math.abs(output.scrollHeight - output.scrollTop - output.clientHeight));
     if (Math.abs(output.scrollHeight - output.scrollTop - output.clientHeight) <= 30.0) { // 30px tolerance
         if (lockCb.checked) {
             document.getElementById('lockedStat').src='res/resources/locked.png';

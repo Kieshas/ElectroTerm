@@ -89,7 +89,6 @@ const createFilterWindow = () => {
 const actionOnClose = (evt) => {
   const { SaveSettings } = require('./event-handler');
   if (!safeToClose) {
-    console.log("CloseEvt");
     evt.preventDefault();
     SaveSettings("winPosX", mainWindow.getPosition()[0]);
     SaveSettings("winPosY", mainWindow.getPosition()[1]);

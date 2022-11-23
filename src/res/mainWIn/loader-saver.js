@@ -39,13 +39,11 @@ const loadSettingsOnStart = () => {
     //LOAD Output window proportion
     window.ipcRender.invoke('requestSettings', 'proportionOutput').then((args) => {
         if (args == null) return;
-        console.log(args);
         outputProportion = args;
     });
     //LOAD Output filtered window proportion
     window.ipcRender.invoke('requestSettings', 'proportionOutputFl').then((args) => {
         if (args == null) return;
-        console.log(args);
         outputFilteredProportion = args;
     });
 }
