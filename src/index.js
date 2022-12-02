@@ -24,7 +24,7 @@ const createWindow = () => {
     height: 600,
     minHeight: 600,
     minWidth: 800,
-    // autoHideMenuBar: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
@@ -34,7 +34,7 @@ const createWindow = () => {
   mainWindow.loadFile(ElectronPath.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   actionOnLoad().then(() => {
     handleSize(mainWindow);
   });
@@ -76,7 +76,7 @@ const createFilterWindow = () => {
     movable: false,
     alwaysOnTop: true,
     minimizable: false,
-    // autoHideMenuBar: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
@@ -96,7 +96,7 @@ const createAutoRspWindow = () => {
     movable: false,
     alwaysOnTop: true,
     minimizable: false,
-    // autoHideMenuBar: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
