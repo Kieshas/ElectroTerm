@@ -21,12 +21,12 @@ const findNextAvailableIdx = () => {
         })
         if (matchNotFound == false) {
             availableIdx++;
-        }
+        } 
     }
     return availableIdx;
 }
 
-const addNewRow = ({textVal, colorVal}) => {
+const addNewRow = ({matchVal, respVal}) => {
     rowIdx = findNextAvailableIdx();
     const newRow = document.createElement('div');
     newRow.className = "row mb-1 justify-content-center filterRow";
@@ -34,13 +34,15 @@ const addNewRow = ({textVal, colorVal}) => {
     if (rows.length > 0) {
         document.getElementById('addNewRowBtn').remove();
     }
+    console.log(matchVal);
+    console.log(respVal)
     newRow.innerHTML =         
     `   
         <div class="col p-0">
-        <input type="text" class="form-control textCntnt" aria-label="filterText" id="filterText${rowIdx}" placeholder="Filter text">
+        <input type="text" class="form-control textCntnt" aria-label="filterText" id="filterText${rowIdx}" placeholder="Request">
         </div>  
-        <div class="col-2 col-md-1 p-0">
-        <input type="color" class="form-control h-100 filterCntnt" aria-label="filterColor" id="filterColor${rowIdx}">
+        <div class="col p-0">
+        <input type="text" class="form-control" aria-label="respText" id="respText${rowIdx}" placeholder="Response">
         </div>
         <button class="col-2 col-md-1 btn btn-outline-primary" type="button" id="addNewRowBtn">
         +
@@ -53,14 +55,14 @@ const addNewRow = ({textVal, colorVal}) => {
     rows.push(newRow);
     addNewRowBtn = document.getElementById('addNewRowBtn');
     rmRowBtn = document.getElementById(`rmRowBtn${rowIdx}`);
-    if (textVal) {
-        document.getElementById(`filterText${rowIdx}`).value = textVal;
+    if (matchVal) {
+        document.getElementById(`filterText${rowIdx}`).value = matchVal;
     }
-    if (colorVal) {
-        document.getElementById(`filterColor${rowIdx}`).value = colorVal;
+    if (respVal) {
+        document.getElementById(`respText${rowIdx}`).value = respVal;
     }
     addNewRowBtn.addEventListener('click', () => {
-        addNewRow({textVal: null, colorVal: null});
+        addNewRow({matchVal: null, respVal: null});
         window.scrollTo(0, document.body.scrollHeight);
     });
     rmRowBtn.addEventListener('click', fn = (args) => {
@@ -72,7 +74,7 @@ const addNewRow = ({textVal, colorVal}) => {
                 this.removeEventListener('click', fn, false);
             } else {
                 document.getElementById(`filterText${rowIdx}`).value = null;
-                document.getElementById(`filterColor${rowIdx}`).value = null;
+                document.getElementById(`respText${rowIdx}`).value = null;
             }
             // window.scrollTo(0, document.body.scrollHeight);
         }
@@ -84,11 +86,11 @@ const saveAction = () => {
     document.querySelectorAll('.textCntnt').forEach((args) => {
         let pair = new Array();
         if (args.value) {
-            pair.push(args.value, document.getElementById('filterColor' + args.id.slice(10)).value);
+            pair.push(args.value, document.getElementById('respText' + args.id.slice(10)).value);
             pairsToSave.push(pair);
         }
     });
-    window.ipcRender.invoke('saveSettings', "filterSettings", pairsToSave);
+    window.ipcRender.invoke('saveSettings', "autoRspSettings", pairsToSave);
     window.close();
 }
 
@@ -106,24 +108,26 @@ clearAllBtn.addEventListener('click', () => {
             args.remove();
         } else {
             document.getElementById('filterText' + args.id.slice(10)).value = "";
-            document.getElementById('filterColor' + args.id.slice(10)).value = "#000000";
+            document.getElementById('respText' + args.id.slice(10)).value = "";
         }
     });
 });
 
-window.ipcRender.invoke('filtersLoaded').then((args) => {
+window.ipcRender.invoke('autoRspLoaded').then((args) => {
     const darkmode = args[0];
-    const filters = args[1];
+    const autoResps = args[1];
     if (darkmode) {
         parent.appendChild(DMcss);
     } else {
         parent.removeChild(DMcss);
     }
-    if (filters == null || filters.length == 0) {
-        addNewRow({textVal: null, colorVal: null});
+
+    if (autoResps == null || autoResps.length == 0) {
+        addNewRow({matchVal: null, respVal: null});
     } else {
-        filters.forEach( (filter) => {
-            addNewRow({textVal: filter[0], colorVal: filter[1]});
+        autoResps.forEach( (autoResp) => {
+            console.log(autoResp);
+            addNewRow({matchVal: autoResp[0], respVal: autoResp[1]});
         })
     }
 });

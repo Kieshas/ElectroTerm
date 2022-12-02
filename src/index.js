@@ -86,6 +86,26 @@ const createFilterWindow = () => {
   return filterWindow;
 };
 
+const createAutoRspWindow = () => {
+  // Create the browser window.
+  const filterWindow = new BrowserWindow({
+    width: 400,
+    height: 400,
+    minHeight: 400,
+    minWidth: 400,
+    movable: false,
+    alwaysOnTop: true,
+    minimizable: false,
+    // autoHideMenuBar: true,
+    webPreferences: {
+      preload: ElectronPath.join(__dirname, 'preload.js'),
+    },
+  });
+
+  filterWindow.loadFile(ElectronPath.join(__dirname, 'autoResponse.html'));
+  return filterWindow;
+};
+
 const actionOnClose = (evt) => {
   const { SaveSettings } = require('./event-handler');
   if (!safeToClose) {
@@ -140,8 +160,6 @@ const actionOnLoad = () => {
   })
 }
 
-//monitorius iosam arba siaip belekam bbz liveiodata
-// TCP kad skaityti RD
 getMainWin = () => mainWindow;
 getPath = (name) => app.getPath(name);
 getAppPath = () => app.getAppPath();
@@ -151,4 +169,5 @@ module.exports = {
   getPath,
   getAppPath,
   createFilterWindow,
+  createAutoRspWindow,
 };

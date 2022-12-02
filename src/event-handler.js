@@ -40,7 +40,7 @@ ipcMain.handle('setPrmsAndConnect', (event, args) => {
 });
 
 ipcMain.on('sendMsg', (event, args) => {
-    portHandler.sendMsg(args[0]);
+    portHandler.internalLineEvt("[SEND]->", args[0]);
 });
 
 ipcMain.on('disconnectPort', () => {
@@ -122,12 +122,39 @@ ipcMain.on('openFilters', (event, args) => {
     });
 });
 
+ipcMain.on('openAutoRsp', (event, args) => {
+    let autoRspWin;
+    autoRspWin = index.createAutoRspWindow();
+    mainWindow.setMovable(false);
+    mainWindow.setMinimizable(false);
+    ipcMain.handle('autoRspLoaded', () => {
+        return new Promise((resolve) => {
+            let savedStruct;
+            try {
+                savedStruct = JSON.parse(fileHandler.readFile(settingsFile));
+                savedStruct = savedStruct.autoRsp;
+            } catch {
+                savedStruct = null;
+            }
+            retval = [args[0], savedStruct];
+            resolve(retval);
+        })
+    });
+    autoRspWin.on('closed', () => {
+        ipcMain.removeHandler('autoRspLoaded');
+        mainWindow.setMovable(true);
+        mainWindow.setMinimizable(true);
+        autoRspWin = null;
+    });
+});
+
 const SaveSettings = (dst, settingVal) => {
     return new Promise((resolve) => {
         let destination = dst;
         let fileCont;
         let fileObj = {
             filters: null,
+            autoRsp: null,
             macros: null,
             lastUsedPort: null,
             lasUsedSerPort: null,
@@ -153,6 +180,10 @@ const SaveSettings = (dst, settingVal) => {
             case "filterSettings":
                 fileObj.filters = settingVal;
                 portHandler.updateFilters(fileObj.filters);
+                break;
+            case "autoRspSettings":
+                fileObj.autoRsp = settingVal;
+                portHandler.updateAutoResps(fileObj.autoRsp);
                 break;
             case "macroSettings":
                 fileObj.macros = settingVal;
@@ -211,6 +242,9 @@ const LoadSettings = (dst) => {
         switch(dst) { // make key value MAP instead of this spaghetti in the future.
             case "filterSettings":
                 resolve(fileContent.filters);
+                break;
+            case "autoRspSettings":
+                resolve(fileContent.autoRsp);
                 break;
             case "macroSettings":
                 resolve(fileContent.macros);

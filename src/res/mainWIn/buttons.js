@@ -4,6 +4,7 @@ const logToFileBtn = document.getElementById('logToFileBtn');
 const openFileBtn = document.getElementById('openFileBtn');
 const sendMsgBtn = document.getElementById('sendMsgBtn');
 const openFiltersBtn = document.getElementById('openFiltersBtn');
+const openAutoRspBtn = document.getElementById('openAutoRspBtn');
 const sendMsgText = document.getElementById('sendMsgText');
 const sendMsgTmo = document.getElementById('sendTmo');
 
@@ -110,14 +111,12 @@ openFileBtn.addEventListener('click', () => {
 
 const sendMsg = (msg) => {
     window.ipcRender.send('sendMsg', msg);
-    outputLine(msg + '\r\n');
 }
 
 let stopContinuous = true;
 const sendMsgContinuous = (msg) => {
     if (stopContinuous) return;
     window.ipcRender.send('sendMsg', msg);
-    outputLine(msg + '\r\n');
     setTimeout(() => {sendMsgContinuous(msg)}, Number(sendMsgTmo.value, 10));
 }
 
@@ -212,4 +211,8 @@ let macroBtnVal = new Array(macroCnt);
 
 openFiltersBtn.addEventListener('click', () => {
     window.ipcRender.send('openFilters', darkModeCb.checked);
+});
+
+openAutoRspBtn.addEventListener('click', () => {
+    window.ipcRender.send('openAutoRsp', darkModeCb.checked);
 });

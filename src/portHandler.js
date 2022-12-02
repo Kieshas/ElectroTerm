@@ -9,11 +9,13 @@ class PortHandler {
     mainWindow = null;
     fileHandler = null;
     filters = null;
+    autoResponses = null;
 
     constructor(mainWindow, fileHandler) {
         this.mainWindow = mainWindow;
         this.fileHandler = fileHandler;
         this.filters = this.fileHandler.loadSettings() != null ? this.fileHandler.loadSettings().filters : null;
+        this.autoResponses = this.fileHandler.loadSettings() != null ? this.fileHandler.loadSettings().autoRsp : null;
     }
 
     set changeBaud(newBaud) {
@@ -62,6 +64,7 @@ class PortHandler {
                 }
             });
         }
+        this.#checkAutoResp(formattedLn);
         if (filterMatched) {
             this.mainWindow.webContents.send('printFilteredLn', formattedLn);
         }
@@ -78,6 +81,20 @@ class PortHandler {
             textColor = "#ffffff";
         }
         return textColor;
+    }
+    #checkAutoResp(lineToCheck) {
+        if (this.autoResponses != null) {
+            this.autoResponses.forEach((asPair) => {
+                if (lineToCheck.indexOf(asPair[0]) > -1) {
+                    this.internalLineEvt("[ARSP]->", asPair[1]);
+                }
+            });
+        }
+    }
+    internalLineEvt(prefix, msgText) {
+        let msgToSend = this.fileHandler.formatAndPrintLn((msgText + "\r\n"), prefix); // fake rn here
+        this.sendMsg(msgText); // send raw msg
+        this.mainWindow.webContents.send('printLn', msgToSend);
     }
     RTSEvt(args) {
         if (this.SPort == null) return;
@@ -98,6 +115,9 @@ class PortHandler {
     };
     updateFilters(filters) {
         this.filters = filters;
+    }
+    updateAutoResps(AResps) {
+        this.autoResponses = AResps;
     }
 };
 

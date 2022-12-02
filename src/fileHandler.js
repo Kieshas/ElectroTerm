@@ -59,13 +59,16 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
             fileSystem.appendFileSync(this.currFullPath, "", 'utf-8');
         }
     };
-    formatAndPrintLn(line) {
-        if (this.timeStamp == true) line = this.#getCurrDate('log') + line;
-        if (this.hexOutput == true) line = this.#asciiToHex(line).toUpperCase();
+    formatAndPrintLn(line, prefix) {
+        let formattedLn = "";
+        if (this.timeStamp == true) formattedLn = this.#getCurrDate('log');
+        if (prefix !== undefined) formattedLn += prefix;
+        formattedLn += line;
+        if (this.hexOutput == true) formattedLn = this.#asciiToHex(line).toUpperCase();
         if (this.logToFile == true) {
-            fileSystem.appendFileSync(this.currFullPath, line, 'utf-8');
+            fileSystem.appendFileSync(this.currFullPath, formattedLn, 'utf-8');
         }
-        return line;
+        return formattedLn;
     };
     restoreCurrLogFileLoc() {
         this.currFileLoc = this.index.getPath('documents');
