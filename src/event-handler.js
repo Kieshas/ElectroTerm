@@ -98,7 +98,13 @@ ipcMain.handle('selectFile', () => {
 
 ipcMain.on('openFilters', (event, args) => {
     let filterWin;
+    const mainWinPos = mainWindow.getPosition();
+    const mainWinSz = mainWindow.getSize();
     filterWin = index.createFilterWindow();
+    const filterWinSz = filterWin.getSize();
+    const xPos = Math.round((mainWinPos[0] + (mainWinSz[0] / 2)) - (filterWinSz[0] / 2));
+    const yPos = Math.round((mainWinPos[1] + (mainWinSz[1] / 2)) - (filterWinSz[1] / 2));
+    filterWin.setPosition(xPos, yPos);
     mainWindow.setMovable(false);
     mainWindow.setMinimizable(false);
     ipcMain.handle('filtersLoaded', () => {
@@ -124,7 +130,14 @@ ipcMain.on('openFilters', (event, args) => {
 
 ipcMain.on('openAutoRsp', (event, args) => {
     let autoRspWin;
+    const mainWinPos = mainWindow.getPosition();
+    const mainWinSz = mainWindow.getSize();
     autoRspWin = index.createAutoRspWindow();
+    const autoRspWinSz = autoRspWin.getSize();
+    const xPos = Math.round((mainWinPos[0] + (mainWinSz[0] / 2)) - (autoRspWinSz[0] / 2));
+    const yPos = Math.round((mainWinPos[1] + (mainWinSz[1] / 2)) - (autoRspWinSz[1] / 2));
+    autoRspWin.setPosition(xPos, yPos);
+
     mainWindow.setMovable(false);
     mainWindow.setMinimizable(false);
     ipcMain.handle('autoRspLoaded', () => {
