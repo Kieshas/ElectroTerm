@@ -96,8 +96,11 @@ ipcMain.handle('selectFile', () => {
     });
 });
 
+let filterWin = null;
+let autoRspWin = null;
+
 ipcMain.on('openFilters', (event, args) => {
-    let filterWin;
+    if (filterWin !== null) return;
     const mainWinPos = mainWindow.getPosition();
     const mainWinSz = mainWindow.getSize();
     filterWin = index.createFilterWindow();
@@ -129,7 +132,7 @@ ipcMain.on('openFilters', (event, args) => {
 });
 
 ipcMain.on('openAutoRsp', (event, args) => {
-    let autoRspWin;
+    if (autoRspWin !== null) return;
     const mainWinPos = mainWindow.getPosition();
     const mainWinSz = mainWindow.getSize();
     autoRspWin = index.createAutoRspWindow();
