@@ -13,7 +13,7 @@ const handleSize = (mainWin) => {
     size = mainWin.getContentSize();
     mainWin.webContents.send('resizeEvt', size);
   });
-}
+}//
 
 let mainWindow;
 
