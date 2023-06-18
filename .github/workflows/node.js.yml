@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
         # name: [ElectroTermWin, ElectroTermLinux, ElectroTermMac]
         # path: [out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip, out/make/deb/x64/electoterm_1.0.0_amd64.deb, out/make/zip/darwin]
