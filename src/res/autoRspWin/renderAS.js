@@ -26,7 +26,7 @@ const findNextAvailableIdx = () => {
     return availableIdx;
 }
 
-const addNewRow = ({matchVal, respVal}) => {
+const addNewRow = ({matchVal, respVal, tempDisabled}) => {
     rowIdx = findNextAvailableIdx();
     const newRow = document.createElement('div');
     newRow.className = "row mb-1 justify-content-center filterRow";
@@ -34,8 +34,6 @@ const addNewRow = ({matchVal, respVal}) => {
     if (rows.length > 0) {
         document.getElementById('addNewRowBtn').remove();
     }
-    console.log(matchVal);
-    console.log(respVal)
     newRow.innerHTML =         
     `   
         <div class="col p-0">
@@ -50,6 +48,8 @@ const addNewRow = ({matchVal, respVal}) => {
         <button class="col-2 col-md-1 btn btn-outline-primary" type="button" id="rmRowBtn${rowIdx}">
         -
         </button>
+        <input type="checkbox" class="btn-check" id="tempDisabled${rowIdx}" autocomplete="off">
+        <label class="col-2 col-md-1 btn btn-outline-primary" for="tempDisabled${rowIdx}">X</label>
     `
     containerDiv.append(newRow);
     rows.push(newRow);
@@ -60,6 +60,9 @@ const addNewRow = ({matchVal, respVal}) => {
     }
     if (respVal) {
         document.getElementById(`respText${rowIdx}`).value = respVal;
+    }
+    if (tempDisabled) {
+        document.getElementById(`tempDisabled${rowIdx}`).checked = true;
     }
     addNewRowBtn.addEventListener('click', () => {
         addNewRow({matchVal: null, respVal: null});
@@ -82,15 +85,16 @@ const addNewRow = ({matchVal, respVal}) => {
 }
 
 const saveAction = () => {
-    let pairsToSave = new Array();
+    let tripletsToSave = new Array();
     document.querySelectorAll('.textCntnt').forEach((args) => {
-        let pair = new Array();
+        let triplet = new Array();
         if (args.value) {
-            pair.push(args.value, document.getElementById('respText' + args.id.slice(10)).value);
-            pairsToSave.push(pair);
+            const currId = args.id.slice(10);
+            triplet.push(args.value, document.getElementById('respText' + currId).value, document.getElementById('tempDisabled' + currId).checked);
+            tripletsToSave.push(triplet);
         }
     });
-    window.ipcRender.invoke('saveSettings', "autoRspSettings", pairsToSave);
+    window.ipcRender.invoke('saveSettings', "autoRspSettings", tripletsToSave);
     window.close();
 }
 
@@ -127,7 +131,7 @@ window.ipcRender.invoke('autoRspLoaded').then((args) => {
     } else {
         autoResps.forEach( (autoResp) => {
             console.log(autoResp);
-            addNewRow({matchVal: autoResp[0], respVal: autoResp[1]});
+            addNewRow({matchVal: autoResp[0], respVal: autoResp[1], tempDisabled: autoResp[2]});
         })
     }
 });

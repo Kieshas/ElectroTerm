@@ -26,7 +26,7 @@ const findNextAvailableIdx = () => {
     return availableIdx;
 }
 
-const addNewRow = ({textVal, colorVal}) => {
+const addNewRow = ({textVal, colorVal, tempDisabled}) => {
     rowIdx = findNextAvailableIdx();
     const newRow = document.createElement('div');
     newRow.className = "row mb-1 justify-content-center filterRow";
@@ -48,6 +48,8 @@ const addNewRow = ({textVal, colorVal}) => {
         <button class="col-2 col-md-1 btn btn-outline-primary" type="button" id="rmRowBtn${rowIdx}">
         -
         </button>
+        <input type="checkbox" class="btn-check" id="tempDisabled${rowIdx}" autocomplete="off">
+        <label class="col-2 col-md-1 btn btn-outline-primary" for="tempDisabled${rowIdx}">X</label>
     `
     containerDiv.append(newRow);
     rows.push(newRow);
@@ -58,6 +60,9 @@ const addNewRow = ({textVal, colorVal}) => {
     }
     if (colorVal) {
         document.getElementById(`filterColor${rowIdx}`).value = colorVal;
+    }
+    if (tempDisabled) {
+        document.getElementById(`tempDisabled${rowIdx}`).checked = true;
     }
     addNewRowBtn.addEventListener('click', () => {
         addNewRow({textVal: null, colorVal: null});
@@ -80,15 +85,16 @@ const addNewRow = ({textVal, colorVal}) => {
 }
 
 const saveAction = () => {
-    let pairsToSave = new Array();
+    let tripletsToSave = new Array();
     document.querySelectorAll('.textCntnt').forEach((args) => {
-        let pair = new Array();
+        let triplet = new Array();
         if (args.value) {
-            pair.push(args.value, document.getElementById('filterColor' + args.id.slice(10)).value);
-            pairsToSave.push(pair);
+            const currId = args.id.slice(10);
+            triplet.push(args.value, document.getElementById('filterColor' + currId).value, document.getElementById('tempDisabled' + currId).checked);
+            tripletsToSave.push(triplet);
         }
     });
-    window.ipcRender.invoke('saveSettings', "filterSettings", pairsToSave);
+    window.ipcRender.invoke('saveSettings', "filterSettings", tripletsToSave);
     window.close();
 }
 
@@ -123,7 +129,7 @@ window.ipcRender.invoke('filtersLoaded').then((args) => {
         addNewRow({textVal: null, colorVal: null});
     } else {
         filters.forEach( (filter) => {
-            addNewRow({textVal: filter[0], colorVal: filter[1]});
+            addNewRow({textVal: filter[0], colorVal: filter[1], tempDisabled: filter[2]});
         })
     }
 });

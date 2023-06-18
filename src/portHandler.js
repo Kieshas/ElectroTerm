@@ -54,12 +54,12 @@ class PortHandler {
         let formattedLn = this.fileHandler.formatAndPrintLn(line);
         let filterMatched = false;
         if (this.filters != null) {
-            this.filters.forEach( (filterPair) => {
-                if (formattedLn.includes(filterPair[0])) {
-                    const filterColor = filterPair[1];
-                    const indexOfFilter = formattedLn.indexOf(filterPair[0]);
-                    const textColor = this.#getTextColor(filterPair[1]);
-                    formattedLn = formattedLn.slice(0, indexOfFilter) + `<span style="background-color: ${filterColor}; color: ${textColor}; padding: 0.2rem">` + formattedLn.slice(indexOfFilter, filterPair[0].length + indexOfFilter) + '</span>' + formattedLn.slice(indexOfFilter + filterPair[0].length);
+            this.filters.forEach( (filterTriplet) => {
+                if (formattedLn.includes(filterTriplet[0]) && !filterTriplet[2]) {//text was found and filter is not temporarily disabled
+                    const filterColor = filterTriplet[1];
+                    const indexOfFilter = formattedLn.indexOf(filterTriplet[0]);
+                    const textColor = this.#getTextColor(filterTriplet[1]);
+                    formattedLn = formattedLn.slice(0, indexOfFilter) + `<span style="background-color: ${filterColor}; color: ${textColor}; padding: 0.2rem">` + formattedLn.slice(indexOfFilter, filterTriplet[0].length + indexOfFilter) + '</span>' + formattedLn.slice(indexOfFilter + filterTriplet[0].length);
                     filterMatched = true;
                 }
             });
@@ -84,9 +84,9 @@ class PortHandler {
     }
     #checkAutoResp(lineToCheck) {
         if (this.autoResponses != null) {
-            this.autoResponses.forEach((asPair) => {
-                if (lineToCheck.indexOf(asPair[0]) > -1) {
-                    this.internalLineEvt("[ARSP]->", asPair[1]);
+            this.autoResponses.forEach((asTriplet) => {
+                if (lineToCheck.indexOf(asTriplet[0]) > -1 && !asTriplet[2]) {//Found matching string and it is not temporarily disabled
+                    this.internalLineEvt("[ARSP]->", asTriplet[1]);
                 }
             });
         }
