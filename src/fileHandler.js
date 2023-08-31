@@ -71,7 +71,7 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
         return formattedLn;
     };
     restoreCurrLogFileLoc() {
-        this.currFileLoc = this.index.getPath('documents');
+        this.currFileLoc = this.currFileLoc.slice(0, this.currFileLoc.indexOf(this.currFileName));
         this.currFileName = "";
         this.currFullPath = "";
     };
