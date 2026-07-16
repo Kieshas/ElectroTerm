@@ -7,11 +7,7 @@ const rtsCb = document.getElementById('rtsBtn');
 const dtrCb = document.getElementById('dtrBtn');
 
 lockCb.addEventListener('click', () => {
-    if (lockCb.checked) {
-        document.getElementById('lockedStat').src='res/resources/unlocked-nobg.png';
-    } else {
-        document.getElementById('lockedStat').src='res/resources/locked.png';
-    }
+    setScrollLock(lockCb.checked);
 });
 
 tsCb.addEventListener('click', () => {
@@ -49,21 +45,21 @@ darkModeCb.addEventListener('click', () => {
 });
 
 rtsCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
+    if (!isConnected) {
         showPopup("Communication Error", "Not connected");
         rtsCb.checked = false;
         return;
     }
-    
+
     window.ipcRender.send('restartEvt', "RTS", rtsCb.checked);
 });
 
 dtrCb.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
+    if (!isConnected) {
         showPopup("Communication Error", "Not connected");
         dtrCb.checked = false;
         return;
     }
-    
+
     window.ipcRender.send('restartEvt', "DTR", dtrCb.checked);
 });

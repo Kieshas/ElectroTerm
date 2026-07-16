@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/bootstrap-nightfall.min.css" id="darkModeCss">
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script defer src="../src/res/filterWin/renderFilters.js"></script>
+    <script>
+      const ROW_WINDOW_CONFIG = {
+        loadedChannel: 'filtersLoaded',
+        saveKey: 'filterSettings',
+        firstPlaceholder: 'Filter text',
+        secondField: { type: 'color', idPrefix: 'filterColor' },
+      };
+    </script>
+    <script defer src="res/common/rowWindow.js"></script>
     <style>
       /* body {
         overflow-y: hidden;

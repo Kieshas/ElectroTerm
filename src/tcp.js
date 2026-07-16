@@ -1,6 +1,6 @@
 const net = require('net');
 
-class TCPHandler { // simple single way draft
+class TCPHandler { // single-client server: a new connection replaces the previous one
     serverHandle = null;
     currSocket = null;
     sendDataFn = null;
@@ -8,36 +8,54 @@ class TCPHandler { // simple single way draft
     constructor(sendDataFn) {
         this.sendDataFn = sendDataFn;
     }
-    
+
     openServer(port) {
         return new Promise ((resolve, reject) => {
-            this.serverHandle = net.createServer({port: port, keepAlive: false}, (socket) => {
+            this.closeServer();
+            this.serverHandle = net.createServer((socket) => {
+                if (this.currSocket != null) {
+                    this.currSocket.destroy();
+                }
                 this.currSocket = socket;
-                this.currSocket.on('data', (data) => this.#processData(data));
-            });
-            this.serverHandle.listen({port: port}, (err) => {
-                resolve();
+                let pending = ""; // TCP chunks do not align with lines, keep the partial tail until it completes
+                socket.on('data', (data) => {
+                    pending += data.toString();
+                    const lines = pending.split('\n');
+                    pending = lines.pop();
+                    lines.forEach((line) => this.sendDataFn(line));
+                });
+                socket.on('close', () => {
+                    if (pending !== "") {
+                        this.sendDataFn(pending);
+                        pending = "";
+                    }
+                    if (this.currSocket === socket) {
+                        this.currSocket = null;
+                    }
+                });
+                socket.on('error', () => {}); // 'close' follows and does the cleanup
             });
             this.serverHandle.on('error', (err) => {
-                if (err.code === 'EADDRINUSE') {
-                    reject("Port already in use");
-                }
+                reject(err.code === 'EADDRINUSE' ? "Port already in use" : err.message);
+            });
+            this.serverHandle.listen({port: Number(port)}, () => {
+                resolve();
             });
         })
     };
-    closeServer() {    
-        if (this.serverHandle == null) return;
-        this.serverHandle.close();
-        if (this.currSocket == null) return;
-        this.currSocket.destroy();
-        this.currSocket.unref();
+    closeServer() {
+        if (this.currSocket != null) {
+            this.currSocket.destroy();
+            this.currSocket = null;
+        }
+        if (this.serverHandle != null) {
+            this.serverHandle.close();
+            this.serverHandle = null;
+        }
     };
-    #processData(data) {
-        if (this.sendDataFn != null) {
-            const temp = data.toString().split('\n');
-            temp.forEach( (line) => {
-                this.sendDataFn(line);
-            });
+    sendMsg(msg) {
+        if (this.currSocket != null) {
+            this.currSocket.write(msg + '\r\n');
         }
     };
 };

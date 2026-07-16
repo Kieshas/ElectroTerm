@@ -1,147 +1,60 @@
 const output = document.getElementById('output');
 const outputFiltered = document.getElementById('outputFiltered');
+const lockedStatImg = document.getElementById('lockedStat');
 
-let lineCount = 0;
-let lineCountFlt = 0;
-let countForSlicing = 0;
-let countForSlicingFlt = 0;
-let lineCntNoScroll = 0;
-let lineCntNoScrollFlt = 0;
+// Lines are individual elements now, so trimming old history is cheap.
+// Raise this for even more scrollback; the only cost is relayout time on window resize.
+const MAX_LINES = 10000;
+const SCROLL_BOTTOM_TOLERANCE_PX = 100;
 
 const ClearOutputs = () => {
-    output.textContent = "";
-    outputFiltered.textContent = "";
-    lineCount = 0;
-    lineCountFlt = 0;
-    countForSlicing = 0;
-    lineCntNoScroll = 0;
-    lineCntNoScrollFlt = 0;
+    output.replaceChildren();
+    outputFiltered.replaceChildren();
+    setScrollLock(false);
 }
 
-const asciiToHex = (str) => { // needs some more attention. Kid of works and not in need of immediate attention
-    let arr1 = [];
-	for (let n = 0, l = str.length; n < l; n ++) {
-		let hex = Number(str.charCodeAt(n)).toString(16);
-		arr1.push(hex);
-	}
-	return arr1.join('') + "   ";
+const setScrollLock = (locked) => {
+    lockCb.checked = locked;
+    lockedStatImg.src = locked ? 'res/resources/locked.png' : 'res/resources/unlocked-nobg.png';
 }
 
-const getCurrDate = () => {
-    const currDate = new Date();
-    let correctCurDate;
-    correctCurDate = currDate.toJSON().slice(0, 10) + " ";
-    correctCurDate += currDate.toJSON().slice(11, 23) + " ";
-    return correctCurDate;
+const isNearBottom = (element) => {
+    return (element.scrollHeight - element.scrollTop - element.clientHeight) <= SCROLL_BOTTOM_TOLERANCE_PX;
 }
 
-const scrollToBottom = () => {
-    output.scrollTop = output.scrollHeight;
-    outputFiltered.scrollTop = output.scrollHeight;
-}
+const appendLines = (element, lines) => {
+    const fragment = document.createDocumentFragment();
+    lines.forEach((html) => {
+        const lineDiv = document.createElement('div');
+        lineDiv.innerHTML = html === "" ? '&nbsp;' : html; // keep blank lines visible
+        fragment.append(lineDiv);
+    });
+    element.append(fragment);
 
-const sliceNumOfLines = (element, lineNum) => {
-    let lastIdx = 0;
-    for (let i = 0; i < lineNum; i++) {
-        lastIdx = element.innerHTML.indexOf('\n', lastIdx) + 1;
-    }
-    element.innerHTML = element.innerHTML.slice(lastIdx);
-    scrollToBottom();
-    return 0;
-}
-
-const slicerCheck = (elementToCheck) => {
-    switch (elementToCheck) {
-        case "FilteredOutput":
-            if (lockCb.checked) {
-                lineCntNoScrollFlt++;
-            } else {
-                countForSlicingFlt++;
-                if (lineCntNoScrollFlt != 0) {
-                    lineCntNoScrollFlt = sliceNumOfLines(outputFiltered, lineCntNoScrollFlt);
-                }
-                if (countForSlicingFlt > 50) {
-                    countForSlicingFlt = sliceNumOfLines(outputFiltered, countForSlicingFlt);
-                }
-            }
-            break;
-        case "RegularOutput":
-            if (lockCb.checked) {
-                lineCntNoScroll++;
-                if (lineCntNoScroll >= 2000) {
-                    scrollToBottom(); // let's be safe because it is possible to break app with overflow here
-                    if (lineCntNoScroll == 2000) {
-                        showPopup("Warning", "Scrolling action was held for too long, clearing");
-                    }
-                }
-            } else {
-                countForSlicing++;
-                if (lineCntNoScroll != 0) {
-                    lineCntNoScroll = sliceNumOfLines(output, lineCntNoScroll);
-                }
-                if (countForSlicing > 50) {
-                    countForSlicing = sliceNumOfLines(output, countForSlicing);
-                }
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-const outputLine = (line) => {
-    
-    if (lineCount >= 200) {
-        slicerCheck("RegularOutput");
-    } else {
-        lineCount++;
-    }
-
-    if (line.includes('<span')) { // reduce DOM reloads
-        output.innerHTML += (line);
-    } else {
-        output.append(line + '\n');
-    }
-
-    if (!lockCb.checked) {
-        scrollToBottom();
-    }
-}
-
-
-const outputFilteredLine = (line) => {
-    if (lineCountFlt >= 200) {
-        slicerCheck("FilteredOutput");
-    } else {
-        lineCountFlt++;
-    }
-    outputFiltered.innerHTML += (line);
-}
-
-window.ipcRender.receive('printLn', (line) => outputLine(line)); // maybe it is possible in the future to somehow "bundle" lines so they wouldn't be sent 1 by 1. that way we would save on so much ipc resource
-
-window.ipcRender.receive('printFilteredLn', (line) => outputFilteredLine(line));
-
-output.addEventListener('scroll', () => {
-    if (Math.abs(output.scrollHeight - output.scrollTop - output.clientHeight) <= 100.0) { // 30px tolerance
-        if (lockCb.checked) {
-            document.getElementById('lockedStat').src='res/resources/locked.png';
-            lockCb.checked = false;
+    const excess = element.childElementCount - MAX_LINES;
+    if (excess > 0) {
+        const heightBefore = element.scrollHeight;
+        for (let i = 0; i < excess; i++) {
+            element.firstElementChild.remove();
         }
-    } else {
-        lockCb.checked = true;
-        document.getElementById('lockedStat').src='res/resources/locked.png';
+        if (lockCb.checked) { // keep the view in place while history is trimmed above it
+            element.scrollTop -= (heightBefore - element.scrollHeight);
+        }
     }
+    if (!lockCb.checked) {
+        element.scrollTop = element.scrollHeight;
+    }
+}
+
+window.ipcRender.receive('printLn', (lines) => appendLines(output, lines));
+
+window.ipcRender.receive('printFilteredLn', (lines) => appendLines(outputFiltered, lines));
+
+// Scrolling away from the bottom of either pane pauses auto-scroll, scrolling back down resumes it.
+output.addEventListener('scroll', () => {
+    setScrollLock(!isNearBottom(output));
 });
 
 outputFiltered.addEventListener('scroll', () => {
-    if (Math.abs(outputFiltered.scrollHeight - outputFiltered.scrollTop - outputFiltered.clientHeight) <= 100.0) {
-        if (lockCb.checked) {
-            document.getElementById('lockedStat').src='res/resources/locked.png';
-            lockCb.checked = false;
-        }
-    } else {
-        lockCb.checked = true;
-        document.getElementById('lockedStat').src='res/resources/locked.png';
-    }
+    setScrollLock(!isNearBottom(outputFiltered));
 });

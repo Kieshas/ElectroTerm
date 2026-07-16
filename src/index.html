@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/bootstrap-nightfall.min.css" id="darkModeCss">
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script defer src="res/mainWIn/loader-saver.js"></script>
+    <script defer src="res/mainWin/loader-saver.js"></script>
     <script defer src="res/mainWin/popup.js"></script>
     <script defer src="res/mainWin/buttons.js"></script>
     <script defer src="res/mainWin/resizer.js"></script>
@@ -86,9 +86,9 @@
           <label class="col-1 btn btn-outline-secondary darkBtn" for="hexCb">HEX</label>
 
           <input type="checkbox" class="btn-check" id="lockCb" autocomplete="off">
-          <label class="col-1 btn btn-outline-secondary darkBtn" for="lockCb"> <img id="lockedStat" src="res/resources/locked.png" alt="lockedCb" width="20" height="25"> </label>
+          <label class="col-1 btn btn-outline-secondary darkBtn" for="lockCb"> <img id="lockedStat" src="res/resources/unlocked-nobg.png" alt="lockedCb" width="20" height="25"> </label>
           
-          <button type="button" class="col btn btn-outline-success" autocomplete="off", id="connect">
+          <button type="button" class="col btn btn-outline-success" autocomplete="off" id="connect">
             Connect
           </button>
         </div>
@@ -114,78 +114,78 @@
         </div>
 
         <div class="row mb-1" id="outputRow">
-          <pre readonly class="col form-control mb-0" id="output" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-right-radius: 0; border-bottom-right-radius: 0; white-space: pre-wrap;"></pre>
-          <pre readonly class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-left-radius: 0; border-bottom-left-radius: 0; white-space: pre-wrap;"></pre>
+          <pre class="col form-control mb-0" id="output" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-right-radius: 0; border-bottom-right-radius: 0; white-space: pre-wrap;"></pre>
+          <pre class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-left-radius: 0; border-bottom-left-radius: 0; white-space: pre-wrap;"></pre>
         </div>
 
         <div class="row mb-1 collapsableRow showIfMacrosFilled">
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-11">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-11">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-12">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-12">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-13">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-13">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-14">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-14">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-15">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-15">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-16">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-16">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-17">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-17">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-18">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-18">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-19">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-19">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-20">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-20">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-21">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-21">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-22">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-22">
             -
           </button>
         </div>
 
         <div class="row mb-1 collapsableRow" id="macroExpansionControl">
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-1">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-1">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-2">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-2">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-3">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-3">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-4">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-4">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-5">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-5">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-6">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-6">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-7">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-7">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-8">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-8">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-9">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-9">
             -
           </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off", id="Macro-10">
+          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-10">
             -
           </button>
 

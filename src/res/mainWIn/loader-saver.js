@@ -49,30 +49,18 @@ const loadSettingsOnStart = () => {
     });
 }
 
-const saveSettingsOnClose = () => { // nested invokes to make sure we finish the write. idk probably a shit idea we will see
-    return new Promise((resolve) => {
-        // SAVE macro buttons
-        macroBtnSaver();
-        // SAVE last used font size
-        window.ipcRender.invoke('saveSettings', "lastUsedFont", currFont).then(() => {
-        // SAVE last used serial port
-        window.ipcRender.invoke('saveSettings', "lastUsedSerPort", port).then(() => {
-        // SAVE last used serial baud
-        window.ipcRender.invoke('saveSettings', "lastUsedSerBaud", baud).then(() => {
-        // SAVE last used TCP port
-        window.ipcRender.invoke('saveSettings', "lastUsedPort", TCPportInput.value).then(() => {
-        // SAVE Output window proportion
-        window.ipcRender.invoke('saveSettings', "proportionOutput", outputProportion).then(() => {     
-        // SAVE Output filtered window proportion
-        window.ipcRender.invoke('saveSettings', "proportionOutputFl", outputFilteredProportion).then(() => {     
-            resolve();
-        });
-        });
-        });
-        });
-        });        
-        });
-    })
+// Each saveSettings invoke is handled synchronously in the main process, so
+// concurrent invokes cannot interleave mid-write; Promise.all is safe here.
+const saveSettingsOnClose = () => {
+    return Promise.all([
+        macroBtnSaver(),
+        window.ipcRender.invoke('saveSettings', "lastUsedFont", currFont),
+        window.ipcRender.invoke('saveSettings', "lastUsedSerPort", port),
+        window.ipcRender.invoke('saveSettings', "lastUsedSerBaud", baud),
+        window.ipcRender.invoke('saveSettings', "lastUsedPort", TCPportInput.value),
+        window.ipcRender.invoke('saveSettings', "proportionOutput", outputProportion),
+        window.ipcRender.invoke('saveSettings', "proportionOutputFl", outputFilteredProportion),
+    ]);
 }
 
 window.ipcRender.receive('onCloseEvt', () => {
@@ -89,5 +77,5 @@ const macroBtnSaver = () => {
         valToSavePair.push(macroBtnVal[i] === "" ? null : macroBtnVal[i]);
         valToSave.push(valToSavePair);
     }
-    window.ipcRender.invoke('saveSettings', "macroSettings", valToSave);
+    return window.ipcRender.invoke('saveSettings', "macroSettings", valToSave);
 }

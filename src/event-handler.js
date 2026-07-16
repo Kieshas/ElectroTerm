@@ -11,6 +11,26 @@ const settingsFile = (index.getAppPath() + '/settings.json');
 const fileHandler = new FileHandler(index, settingsFile);
 const portHandler = new PortHandler(mainWindow, fileHandler);
 const tcpHandler = new TCPHandler((data) => { portHandler.parserEvt(data); });
+portHandler.altSendFn = (msg) => { tcpHandler.sendMsg(msg); }; // sends (incl. auto-responses) go out over TCP when serial is closed
+
+// Maps a setting name used in code to its key inside settings.json.
+// The 'lasUsed*' misspellings are kept so existing settings.json files keep working.
+const SETTINGS_KEY_MAP = {
+    filterSettings: 'filters',
+    autoRspSettings: 'autoRsp',
+    macroSettings: 'macros',
+    lastUsedPort: 'lastUsedPort',
+    lastUsedFont: 'lastUsedFont',
+    lastUsedSerPort: 'lasUsedSerPort',
+    lastUsedSerBaud: 'lasUsedSerBaud',
+    proportionOutput: 'proportionOutput',
+    proportionOutputFl: 'proportionOutputFl',
+    winPosX: 'winPosX',
+    winPosY: 'winPosY',
+    winSizeX: 'winSizeX',
+    winSizeY: 'winSizeY',
+    maximized: 'winMaximized',
+};
 
 ipcMain.handle('populateDD', () => {
     return new Promise((resolve) => {
@@ -36,7 +56,7 @@ ipcMain.handle('setPrmsAndConnect', (event, args) => {
             portHandler.cleanUp();
             reject(err);
         })
-    })    
+    })
 });
 
 ipcMain.on('sendMsg', (event, args) => {
@@ -72,7 +92,9 @@ ipcMain.on('hexCheck', (event, args) => {
 })
 
 ipcMain.on('openFile', () => {
-    shell.openPath(fileHandler.currFullPath);
+    if (fileHandler.currFullPath !== "") {
+        shell.openPath(fileHandler.currFullPath);
+    }
 });
 
 ipcMain.handle('selectFile', () => {
@@ -119,8 +141,7 @@ ipcMain.on('openFilters', (event, args) => {
             } catch {
                 savedFilters = null;
             }
-            retval = [args[0], savedFilters];
-            resolve(retval);
+            resolve([args[0], savedFilters]);
         })
     });
     filterWin.on('closed', () => {
@@ -152,8 +173,7 @@ ipcMain.on('openAutoRsp', (event, args) => {
             } catch {
                 savedStruct = null;
             }
-            retval = [args[0], savedStruct];
-            resolve(retval);
+            resolve([args[0], savedStruct]);
         })
     });
     autoRspWin.on('closed', () => {
@@ -166,141 +186,33 @@ ipcMain.on('openAutoRsp', (event, args) => {
 
 const SaveSettings = (dst, settingVal) => {
     return new Promise((resolve) => {
-        let destination = dst;
-        let fileCont;
-        let fileObj = {
-            filters: null,
-            autoRsp: null,
-            macros: null,
-            lastUsedPort: null,
-            lasUsedSerPort: null,
-            lasUsedSerBaud: null,
-            proportionOutput: null,
-            proportionOutputFl: null,
-            winPosX: null,
-            winPosY: null,
-            winSizeX: null,
-            winSizeY: null,
-            winMaximized: null,
-        };
+        const key = SETTINGS_KEY_MAP[dst];
+        if (key == undefined) return resolve();
+        let fileObj;
         try {
-            fileCont = JSON.parse(fileHandler.readFile(settingsFile));
+            fileObj = JSON.parse(fileHandler.readFile(settingsFile));
         } catch {
-            fileCont = null;
+            fileObj = {};
         }
-        if (fileCont != null) { // not sure if this will work with more settings. For a later date
-            fileObj = fileCont;
-        }
-    
-        switch (destination) {
-            case "filterSettings":
-                fileObj.filters = settingVal;
-                portHandler.updateFilters(fileObj.filters);
-                break;
-            case "autoRspSettings":
-                fileObj.autoRsp = settingVal;
-                portHandler.updateAutoResps(fileObj.autoRsp);
-                break;
-            case "macroSettings":
-                fileObj.macros = settingVal;
-                break;
-            case "lastUsedPort":
-                fileObj.lastUsedPort = settingVal;
-                break;
-            case "lastUsedFont":
-                fileObj.lastUsedFont = settingVal;
-                break;
-            case "lastUsedSerPort":
-                fileObj.lasUsedSerPort = settingVal;
-                break;
-            case "lastUsedSerBaud":
-                fileObj.lasUsedSerBaud = settingVal;
-                break;
-            case "proportionOutput":
-                fileObj.proportionOutput = settingVal;
-                break;
-            case "proportionOutputFl":
-                fileObj.proportionOutputFl = settingVal;
-                break;
-            case "winPosX":
-                fileObj.winPosX = settingVal;
-                break;
-            case "winPosY":
-                fileObj.winPosY = settingVal;
-                break;
-            case "winSizeX":
-                fileObj.winSizeX = settingVal;
-                break;
-            case "winSizeY":
-                fileObj.winSizeY = settingVal;
-                break;
-            case "maximized":
-                fileObj.winMaximized = settingVal;
-                break;
-            default:
-                break;
-        }
-        fileHandler.writeFile(settingsFile, "");
-        fileHandler.appendFile(settingsFile, (JSON.stringify(fileObj, null, 4)));
+        fileObj[key] = settingVal;
+        if (dst === "filterSettings") portHandler.updateFilters(settingVal);
+        if (dst === "autoRspSettings") portHandler.updateAutoResps(settingVal);
+        fileHandler.writeFile(settingsFile, JSON.stringify(fileObj, null, 4));
         resolve();
     })
 }
 
 const LoadSettings = (dst) => {
     return new Promise((resolve) => {
-        let fileContent = null;
+        const key = SETTINGS_KEY_MAP[dst];
+        let fileContent;
         try {
             fileContent = JSON.parse(fileHandler.readFile(settingsFile));
         } catch {
             fileContent = null;
-            resolve(null);
         }
-        switch(dst) { // make key value MAP instead of this spaghetti in the future.
-            case "filterSettings":
-                resolve(fileContent.filters);
-                break;
-            case "autoRspSettings":
-                resolve(fileContent.autoRsp);
-                break;
-            case "macroSettings":
-                resolve(fileContent.macros);
-                break;
-            case "lastUsedPort":
-                resolve(fileContent.lastUsedPort);
-                break;
-            case "lastUsedFont":
-                resolve(fileContent.lastUsedFont);
-                break;
-            case "lastUsedSerPort":
-                resolve(fileContent.lasUsedSerPort);
-                break;
-            case "lastUsedSerBaud":
-                resolve(fileContent.lasUsedSerBaud);
-                break;            
-            case "proportionOutput":
-                resolve(fileContent.proportionOutput);
-                break;
-            case "proportionOutputFl":
-                resolve(fileContent.proportionOutputFl);
-                break;
-            case "winPosX":
-                resolve(fileContent.winPosX);
-                break;
-            case "winPosY":
-                resolve(fileContent.winPosY);
-                break;
-            case "winSizeX":
-                resolve(fileContent.winSizeX);
-                break;
-            case "winSizeY":
-                resolve(fileContent.winSizeY);
-                break;
-            case "maximized":
-                resolve(fileContent.winMaximized);
-                break;
-            default:
-                break;
-        }
+        if (key == undefined || fileContent == null) return resolve(null);
+        resolve(fileContent[key] != undefined ? fileContent[key] : null);
     });
 }
 
@@ -319,10 +231,9 @@ ipcMain.handle('openServer', (event, args) => {
         retVal.then(() => {
             resolve();
         }).catch((err) => {
-            // portHandler.cleanUp();
             reject(err);
         })
-    })   
+    })
 });
 
 ipcMain.on('closeServer', () => {

@@ -8,7 +8,11 @@ const openAutoRspBtn = document.getElementById('openAutoRspBtn');
 const sendMsgText = document.getElementById('sendMsgText');
 const sendMsgTmo = document.getElementById('sendTmo');
 
+let isConnected = false;
+
 const disconnectPort = () => {
+    isConnected = false;
+    stopContinuousSend();
     switch (workMode) {
         case "SERIAL ":
             window.ipcRender.send('disconnectPort');
@@ -37,8 +41,9 @@ const connectActionSerial = () => {
         return;
     }
 
-    if (connectBtn.className == "col btn btn-outline-success") {
+    if (!isConnected) {
         window.ipcRender.invoke('setPrmsAndConnect', port, baud).then(() => {
+            isConnected = true;
             connectBtn.className = "col btn btn-outline-danger";
             connectBtn.textContent = "Disconnect";
         }).catch((err) => {
@@ -58,8 +63,9 @@ const connectActionTCP = () => {
         return;
     }
 
-    if (connectBtn.className == "col btn btn-outline-success") {
+    if (!isConnected) {
         window.ipcRender.invoke('openServer', TCPportInput.value).then(() => {
+            isConnected = true;
             connectBtn.className = "col btn btn-outline-danger";
             connectBtn.textContent = "Close";
         }).catch((err) => {
@@ -115,9 +121,19 @@ const sendMsg = (msg) => {
 
 let stopContinuous = true;
 const sendMsgContinuous = (msg) => {
-    if (stopContinuous) return;
+    if (stopContinuous || !isConnected) return;
     window.ipcRender.send('sendMsg', msg);
-    setTimeout(() => {sendMsgContinuous(msg)}, Number(sendMsgTmo.value, 10));
+    const tmo = Number(sendMsgTmo.value);
+    const delay = Number.isFinite(tmo) && tmo >= 10 ? tmo : 10; // clamp so an emptied field can't turn into a 0ms flood
+    setTimeout(() => {sendMsgContinuous(msg)}, delay);
+}
+
+const stopContinuousSend = () => {
+    if (stopContinuous) return;
+    stopContinuous = true;
+    sendMsgBtn.classList.remove('btn-outline-danger');
+    sendMsgBtn.classList.add('btn-outline-secondary');
+    sendMsgBtn.textContent = "Send";
 }
 
 const timeoutSendMagic = (msgToSend) => {
@@ -128,17 +144,14 @@ const timeoutSendMagic = (msgToSend) => {
         stopContinuous = false;
         sendMsgContinuous(msgToSend)
     } else if (sendMsgTmo.value != "" && sendMsgTmo.value != 0) { // turn off periodical send
-        sendMsgBtn.classList.remove('btn-outline-danger');
-        sendMsgBtn.classList.add('btn-outline-secondary');
-        sendMsgBtn.textContent = "Send";
-        stopContinuous = true;
+        stopContinuousSend();
     } else {
         sendMsg(msgToSend);
     }
 }
 
 sendMsgBtn.addEventListener('click', () => {
-    if (connectBtn.className == "col btn btn-outline-success") {
+    if (!isConnected) {
         showPopup("Communication Error", "Not connected");
         return;
     }
@@ -147,7 +160,7 @@ sendMsgBtn.addEventListener('click', () => {
 
 sendMsgText.addEventListener('keydown', (event) => {
     if (event.key === "Enter") {
-        if (connectBtn.className == "col btn btn-outline-success") {
+        if (!isConnected) {
             showPopup("Communication Error", "Not connected");
             return;
         }
@@ -189,15 +202,16 @@ document.querySelectorAll(".macroBtn").forEach( (btn) => { // prikraut dar viena
     btn.textContent = "-";
     btn.addEventListener('click', () => {
         if (editModeCb.checked) {
-            promiseToWait = showInputPopup(btn.id, "Macro name (max 7 characters)", btn.textContent, "Message to be sent", macroBtnVal[(Number(btn.id.slice(6)) - 1)]);
+            const promiseToWait = showInputPopup(btn.id, "Macro name (max 7 characters)", btn.textContent, "Message to be sent", macroBtnVal[(Number(btn.id.slice(6)) - 1)]);
             promiseToWait.then((input) => {
+                if (input == null) return; // popup dismissed without saving
                 btn.textContent = input[0];
                 macroBtnVal[(Number(btn.id.slice(6)) - 1)] = input[1]; //subtract length of "Macro-" from the start - 1 since macro id's start from 1
                 activateMacro();
                 updateMacroRows();
             });
         } else {
-            if (connectBtn.className == "col btn btn-outline-success") {
+            if (!isConnected) {
                 showPopup("Communication Error", "Not connected");
                 return;
             }

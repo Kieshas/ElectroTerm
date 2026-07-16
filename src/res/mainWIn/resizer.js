@@ -10,7 +10,7 @@ const resizeOutput = (size) => {
         }
     });
     if (size == undefined) return;
-    let REMsize = parseInt(getComputedStyle(document. documentElement).fontSize, 10);
+    let REMsize = parseInt(getComputedStyle(document.documentElement).fontSize, 10);
     let additionalPXS = ((REMsize * 0.25) * (rowCnt + 1)); // all rows use mb-1 (margin of 0.25rem) so we count the ammount of PX that we need to subtract from contentSize to compensate for margins
     let height = 0;
     document.querySelectorAll(".row").forEach( (row) => {
@@ -24,11 +24,11 @@ const resizeOutput = (size) => {
     outputFiltered.style.maxWidth = (size[0] * outputFilteredProportion) + 'px';
     macroDDContent.style.maxHeight = size[1]/2 + "px";
     height = 0;
-} 
+}
 
-window.ipcRender.receive('resizeEvt', (args) => { 
-    resizeOutput(args); 
-    setTimeout(resizeOutput(args), 100); // double down for more smoothness
+window.ipcRender.receive('resizeEvt', (args) => {
+    resizeOutput(args);
+    setTimeout(() => resizeOutput(args), 100); // double down for more smoothness
 });
 
 const updtSzOnLoad = async () => {
@@ -41,7 +41,7 @@ const offsetThr = 15;
 let clicked = false;
 
 const getSizeInDec = (element) => {
-    return Number(element.style.maxWidth.slice(0, element.style.maxWidth.indexOf('px')), 10);
+    return Number(element.style.maxWidth.slice(0, element.style.maxWidth.indexOf('px')));
 }
 
 const preventSelection = (evt) => {
@@ -53,18 +53,6 @@ const adjustProportions = () => {
     outputFilteredProportion = getSizeInDec(outputFiltered) / (getSizeInDec(outputFiltered) + getSizeInDec(output));
 }
 
-const ritualBeforeDrag = () => {
-    clicked = true;
-    output.addEventListener('selectstart', preventSelection);
-    outputFiltered.addEventListener('selectstart', preventSelection);
-}
-
-const ritualAfterDrag = () => {
-    clicked = false;
-    output.removeEventListener('selectstart', preventSelection);
-    outputFiltered.removeEventListener('selectstart', preventSelection);
-}
-
 const mouseMoveRitual = (evt) => {
     if (clicked) {
         outputFiltered.style.maxWidth = (getSizeInDec(outputFiltered) - evt.movementX) + 'px';
@@ -73,21 +61,22 @@ const mouseMoveRitual = (evt) => {
     }
 }
 
-outputFiltered.addEventListener('mousemove', (event) => {
-        mouseMoveRitual(event);
-});
+// Track the drag on window so fast mouse movements can't escape the panes mid-drag
+const ritualBeforeDrag = () => {
+    clicked = true;
+    window.addEventListener('mousemove', mouseMoveRitual);
+    window.addEventListener('mouseup', ritualAfterDrag);
+    output.addEventListener('selectstart', preventSelection);
+    outputFiltered.addEventListener('selectstart', preventSelection);
+}
 
-output.addEventListener('mousemove', (event) => {
-        mouseMoveRitual(event);
-});
-
-outputFiltered.addEventListener('mouseup', () => {
-    ritualAfterDrag();
-});
-
-output.addEventListener('mouseup', () => {
-    ritualAfterDrag();
-});
+const ritualAfterDrag = () => {
+    clicked = false;
+    window.removeEventListener('mousemove', mouseMoveRitual);
+    window.removeEventListener('mouseup', ritualAfterDrag);
+    output.removeEventListener('selectstart', preventSelection);
+    outputFiltered.removeEventListener('selectstart', preventSelection);
+}
 
 outputFiltered.addEventListener('mousedown', (event) => {
     if (event.offsetX <= offsetThr) {
@@ -98,17 +87,5 @@ outputFiltered.addEventListener('mousedown', (event) => {
 output.addEventListener('mousedown', (event) => {
     if (event.offsetX >= (output.offsetWidth - offsetThr)) {
         ritualBeforeDrag();
-    }
-});
-
-outputFiltered.addEventListener('mouseout', (event) => {
-    if (event.toElement != output) {
-        ritualAfterDrag();
-    }
-});
-
-output.addEventListener('mouseout', (event) => {
-    if (event.toElement != outputFiltered) {
-        ritualAfterDrag();
     }
 });

@@ -10,7 +10,7 @@ if (require('electron-squirrel-startup')) {
 
 const handleSize = (mainWin) => {
   mainWin.on('resize', () => {
-    size = mainWin.getContentSize();
+    const size = mainWin.getContentSize();
     mainWin.webContents.send('resizeEvt', size);
   });
 }
@@ -118,49 +118,23 @@ const actionOnClose = (evt) => {
   }
 }
 
-const actionOnLoad = () => {
+const actionOnLoad = async () => {
   const { LoadSettings } = require('./event-handler');
-  return new Promise((resolve) => {
-    let width;
-    let height;
-    let posX;
-    let posY;
-    let maximized;
-    LoadSettings("winSizeX").then((args) => { 
-      if (args != null) {
-        width = args;
-      }
-    LoadSettings("winSizeY").then((args) => { 
-      if (args != null) {
-        height = args;
-      }
-    LoadSettings("winPosX").then((args) => { 
-      if (args != null) {
-        posX = args;
-      }
-    LoadSettings("winPosY").then((args) => { 
-      if (args != null) {
-        posY = args;
-      }
-    LoadSettings("maximized").then((args) => { 
-      if (args != null) {
-        maximized = args;
-      }
-      if (width && height)  mainWindow.setContentSize(width, height);
-      if (posX && posY)     mainWindow.setPosition(posX, posY);
-      if (maximized)        mainWindow.maximize();
-      resolve();
-    });
-    });
-    });
-    });
-    });
-  })
+  const [width, height, posX, posY, maximized] = await Promise.all([
+    LoadSettings("winSizeX"),
+    LoadSettings("winSizeY"),
+    LoadSettings("winPosX"),
+    LoadSettings("winPosY"),
+    LoadSettings("maximized"),
+  ]);
+  if (width != null && height != null) mainWindow.setContentSize(width, height);
+  if (posX != null && posY != null)    mainWindow.setPosition(posX, posY);
+  if (maximized)                       mainWindow.maximize();
 }
 
-getMainWin = () => mainWindow;
-getPath = (name) => app.getPath(name);
-getAppPath = () => app.getAppPath();
+const getMainWin = () => mainWindow;
+const getPath = (name) => app.getPath(name);
+const getAppPath = () => app.getAppPath();
 
 module.exports = {
   getMainWin,

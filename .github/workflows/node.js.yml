@@ -8,30 +8,30 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
-    # runs-on: windows-latest
-
     strategy:
       matrix:
-        node-version: [18.x]
+        # electron 43's install script needs require(esm), i.e. Node >= 20.19; 26 matches the dev environment
+        node-version: [26.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        # name: [ElectroTermWin, ElectroTermLinux, ElectroTermMac]
-        # path: [out/make/zip/win32/x64/ElectoTerm-win32-x64-1.0.0.zip, out/make/deb/x64/electoterm_1.0.0_amd64.deb, out/make/zip/darwin]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v7
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install
+    # npm ci installs exactly the lockfile; dependency install scripts (electron,
+    # @serialport/bindings-cpp, electron-winstaller) are pre-approved via the
+    # allowScripts block in package.json, and postinstall applies patches/
+    - run: npm ci
     - run: npm run make
     - name: Archive artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: ElectroTerm-${{matrix.os}}
         path: out/make

@@ -9,6 +9,7 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
     hexOutput = false;
     index = null;
     settingsFile = null;
+    logStream = null;
 
     constructor(index, settingsFile) {
         this.index = index;
@@ -18,6 +19,9 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
 
     set setLogToFile(newState) {
         this.logToFile = newState;
+        if (newState == false) {
+            this.#closeLogStream();
+        }
     };
     set setCurrFilePath(path) {
         let strIdx;
@@ -55,18 +59,23 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
         fileSystem.appendFileSync(filePath, content, 'utf-8');
     };
     createNewLogFile() {
-        if (this.logToFile == true) {
-            fileSystem.appendFileSync(this.currFullPath, "", 'utf-8');
+        this.#closeLogStream();
+        if (this.logToFile == true && this.currFullPath !== "") {
+            this.logStream = fileSystem.createWriteStream(this.currFullPath, { flags: 'a' });
+            this.logStream.on('error', (err) => {
+                console.error('Log file write failed: ' + err.message);
+                this.logToFile = false;
+                this.#closeLogStream();
+            });
         }
     };
     formatAndPrintLn(line, prefix) {
         let formattedLn = "";
         if (this.timeStamp == true) formattedLn = this.#getCurrDate('log');
         if (prefix !== undefined) formattedLn += prefix;
-        formattedLn += line;
-        if (this.hexOutput == true) formattedLn = this.#asciiToHex(line).toUpperCase();
-        if (this.logToFile == true) {
-            fileSystem.appendFileSync(this.currFullPath, formattedLn, 'utf-8');
+        formattedLn += this.hexOutput == true ? this.#asciiToHex(line).toUpperCase() : line;
+        if (this.logToFile == true && this.logStream != null) {
+            this.logStream.write(formattedLn + '\n');
         }
         return formattedLn;
     };
@@ -86,25 +95,25 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
             return fileCont;
         }
     }
+    #closeLogStream() {
+        if (this.logStream != null) {
+            this.logStream.end();
+            this.logStream = null;
+        }
+    };
     #getCurrDate(format) {
         const currDate = new Date();
-        currDate.setHours(currDate.getHours() - (currDate.getTimezoneOffset() / 60));
-        let correctCurDate;
+        const pad = (num, len = 2) => String(num).padStart(len, '0');
+        const datePart = `${currDate.getFullYear()}-${pad(currDate.getMonth() + 1)}-${pad(currDate.getDate())}`;
         if (format == 'file') {
-            correctCurDate = currDate.toJSON().slice(0, 10) + '_';
-            correctCurDate += currDate.toJSON().slice(11, 19);
-            correctCurDate = correctCurDate.replaceAll(':', '꞉');    
-        } else if (format == 'log') {
-            correctCurDate = currDate.toJSON().slice(0, 10) + " ";
-            correctCurDate += currDate.toJSON().slice(11, 23) + " ";
+            return datePart + '_' + `${pad(currDate.getHours())}꞉${pad(currDate.getMinutes())}꞉${pad(currDate.getSeconds())}`;
         }
-        return correctCurDate;
+        return datePart + ` ${pad(currDate.getHours())}:${pad(currDate.getMinutes())}:${pad(currDate.getSeconds())}.${pad(currDate.getMilliseconds(), 3)} `;
     };
-    #asciiToHex(str) { // needs some more attention. Kid of works and not in need of immediate attention
+    #asciiToHex(str) {
         let arr1 = [];
         for (let n = 0, l = str.length; n < l; n ++) {
-            let hex = Number(str.charCodeAt(n)).toString(16);
-            arr1.push(hex);
+            arr1.push(str.charCodeAt(n).toString(16).padStart(2, '0'));
         }
         return arr1.join('') + "   ";
     };

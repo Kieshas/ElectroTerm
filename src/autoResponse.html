@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="../css/bootstrap.css">
     <link rel="stylesheet" href="../css/bootstrap-nightfall.min.css" id="darkModeCss">
     <script src="../js/bootstrap.bundle.min.js"></script>
-    <script defer src="../src/res/autoRspWin/renderAS.js"></script>
+    <script>
+      const ROW_WINDOW_CONFIG = {
+        loadedChannel: 'autoRspLoaded',
+        saveKey: 'autoRspSettings',
+        firstPlaceholder: 'Request',
+        secondField: { type: 'text', idPrefix: 'respText', placeholder: 'Response' },
+      };
+    </script>
+    <script defer src="res/common/rowWindow.js"></script>
     <style>
       /* body {
         overflow-y: hidden;

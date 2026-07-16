@@ -1,9 +1,33 @@
 let modalWrap = null;
 
-const showPopup = (title, body) => {
-    if (modalWrap !== null) {
-        modalWrap.remove();
+const disposeCurrentPopup = () => {
+    if (modalWrap == null) return;
+    const modalEl = modalWrap.querySelector('.modal');
+    const instance = bootstrap.Modal.getInstance(modalEl);
+    if (instance != null) {
+        instance.dispose();
     }
+    modalWrap.remove();
+    modalWrap = null;
+    // dispose() of an open modal does not clean these up
+    document.querySelectorAll('.modal-backdrop').forEach((backdrop) => backdrop.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+};
+
+const cleanupOnHidden = (wrap, modalEl) => {
+    modalEl.addEventListener('hidden.bs.modal', () => {
+        if (modalWrap === wrap) {
+            disposeCurrentPopup();
+        } else {
+            wrap.remove(); // already replaced by a newer popup
+        }
+    });
+};
+
+const showPopup = (title, body) => {
+    disposeCurrentPopup();
 
     modalWrap = document.createElement('div');
     modalWrap.innerHTML = `
@@ -11,10 +35,10 @@ const showPopup = (title, body) => {
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title", id = titleText></h5>
+                    <h5 class="modal-title" id="titleText"></h5>
                 </div>
                 <div class="modal-body">
-                    <p id = bodyText></p>
+                    <p id="bodyText"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -26,17 +50,17 @@ const showPopup = (title, body) => {
 
     document.body.append(modalWrap);
 
-    document.getElementById("titleText").textContent = title;
-    document.getElementById("bodyText").textContent = body;
+    modalWrap.querySelector("#titleText").textContent = title;
+    modalWrap.querySelector("#bodyText").textContent = body;
 
-    let modal = new bootstrap.Modal(modalWrap.querySelector('.modal'));
+    const modalEl = modalWrap.querySelector('.modal');
+    cleanupOnHidden(modalWrap, modalEl);
+    let modal = new bootstrap.Modal(modalEl);
     modal.show();
 };
 
 const showInputPopup = (title, ...args) => {
-    if (modalWrap !== null) {
-        modalWrap.remove();
-    }
+    disposeCurrentPopup();
 
     modalWrap = document.createElement('div');
     modalWrap.innerHTML = `
@@ -44,7 +68,7 @@ const showInputPopup = (title, ...args) => {
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title", id = titleText></h5>
+                    <h5 class="modal-title" id="titleText"></h5>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="input1" class="form-control validate" maxlength=7>
@@ -65,18 +89,29 @@ const showInputPopup = (title, ...args) => {
 
     document.body.append(modalWrap);
 
-    document.getElementById("titleText").textContent = title;
-    document.getElementById("input1Label").textContent = args[0];
-    document.getElementById("input1").value = args[1] == undefined ? "" : args[1];
-    document.getElementById("input2Label").textContent = args[2];
-    document.getElementById("input2").value = args[3] == undefined ? "" : args[3];
+    modalWrap.querySelector("#titleText").textContent = title;
+    modalWrap.querySelector("#input1Label").textContent = args[0];
+    modalWrap.querySelector("#input1").value = args[1] == undefined ? "" : args[1];
+    modalWrap.querySelector("#input2Label").textContent = args[2];
+    modalWrap.querySelector("#input2").value = args[3] == undefined ? "" : args[3];
 
-    let modal = new bootstrap.Modal(modalWrap.querySelector('.modal'));
+    const wrap = modalWrap;
+    const modalEl = modalWrap.querySelector('.modal');
+    let modal = new bootstrap.Modal(modalEl);
     modal.show();
     return new Promise((resolve) => {
-        document.getElementById('saveBtn').addEventListener('click', () => {
-            retval = [document.getElementById('input1').value, document.getElementById('input2').value];
-            resolve(retval);
+        let saved = false;
+        wrap.querySelector('#saveBtn').addEventListener('click', () => {
+            saved = true;
+            resolve([wrap.querySelector('#input1').value, wrap.querySelector('#input2').value]);
+        });
+        modalEl.addEventListener('hidden.bs.modal', () => {
+            if (!saved) resolve(null); // dismissed without saving
+            if (modalWrap === wrap) {
+                disposeCurrentPopup();
+            } else {
+                wrap.remove();
+            }
         });
     });
 };

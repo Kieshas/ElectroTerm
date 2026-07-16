@@ -104,3 +104,6 @@ dist
 .tern-port
 /macros.txt
 /settings.json
+
+# electron-forge build output
+out/
