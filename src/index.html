@@ -1,216 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>ElectroTerm</title>
-    <link rel="stylesheet" href="../css/bootstrap.css">
-    <link rel="stylesheet" href="../css/bootstrap-nightfall.min.css" id="darkModeCss">
-    <script src="../js/bootstrap.bundle.min.js"></script>
-    <script defer src="res/mainWin/loader-saver.js"></script>
-    <script defer src="res/mainWin/popup.js"></script>
-    <script defer src="res/mainWin/buttons.js"></script>
-    <script defer src="res/mainWin/resizer.js"></script>
-    <script defer src="res/mainWin/dropdowns.js"></script>
+    <link rel="stylesheet" href="../css/app.css">
+    <script>
+      // set theme before first paint to avoid a flash
+      document.documentElement.dataset.theme =
+        localStorage.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    </script>
+    <script defer src="res/mainWin/ui.js"></script>
     <script defer src="res/mainWin/output.js"></script>
-    <script defer src="res/mainWin/checkbox.js"></script>
-    <script defer src="res/mainWin/render.js"></script>
-    <style>
-      body {
-        overflow-y: hidden;
-        overflow-x: hidden;
-      }
-    </style>
+    <script defer src="res/mainWin/connection.js"></script>
+    <script defer src="res/mainWin/send.js"></script>
+    <script defer src="res/mainWin/panels.js"></script>
+    <script defer src="res/mainWin/resizer.js"></script>
+    <script defer src="res/mainWin/settings.js"></script>
   </head>
-  <body>
-    <div class="m-1">
-      <div class="container-fluid">
-        <div class="row mb-1">
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="modeDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            SERIAL
-          </button>
-          <ul class="dropdown-menu mode" aria-labelledby="modeDropDown" id="modeDDcontent">
-            <li><a class="dropdown-item" href="#">SERIAL </a></li>
-            <li><a class="dropdown-item" href="#">TCP </a></li>
-          </ul>
+  <body class="h-screen flex flex-col bg-bg text-ink font-sans text-sm overflow-hidden">
 
-          <input type="text" class="col form-control collapsableCol" aria-label="TCPportText" id="TCPportInput" placeholder="Port" style="display: none;" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-
-          <button class="col btn btn-outline-primary dropdown-toggle collapsableCol" type="button" id="portDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Port
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="portDropDown" id="portDDcontent"></ul>
-          
-          <button class="col btn btn-outline-primary dropdown-toggle collapsableCol" type="button" id="baudDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Baud
-          </button>
-          <ul class="dropdown-menu baud" aria-labelledby="baudDropDown" id="baudDDcontent">
-            <li><a class="dropdown-item" href="#">1200 </a></li>
-            <li><a class="dropdown-item" href="#">2400 </a></li>
-            <li><a class="dropdown-item" href="#">4800 </a></li>
-            <li><a class="dropdown-item" href="#">9600 </a></li>
-            <li><a class="dropdown-item" href="#">14400 </a></li>
-            <li><a class="dropdown-item" href="#">19200 </a></li>
-            <li><a class="dropdown-item" href="#">28800 </a></li>
-            <li><a class="dropdown-item" href="#">38400 </a></li>
-            <li><a class="dropdown-item" href="#">115200 </a></li>
-            <li><a class="dropdown-item" href="#">128000 </a></li>
-            <li><a class="dropdown-item" href="#">230400 </a></li>
-            <li><a class="dropdown-item" href="#">256000 </a></li>
-            <li><a class="dropdown-item" href="#">460800 </a></li>
-            <li><a class="dropdown-item" href="#">921600 </a></li>
-          </ul>
-
-          <button class="col btn btn-outline-primary dropdown-toggle" type="button" id="fontDropDown" data-bs-toggle="dropdown" aria-expanded="false">
-            Font: 16px
-          </button>
-          <ul class="dropdown-menu font" aria-labelledby="fontDropDown" id="fontDDcontent">
-            <li><a class="dropdown-item" href="#">10px </a></li>
-            <li><a class="dropdown-item" href="#">11px </a></li>
-            <li><a class="dropdown-item" href="#">12px </a></li>
-            <li><a class="dropdown-item" href="#">13px </a></li>
-            <li><a class="dropdown-item" href="#">14px </a></li>
-            <li><a class="dropdown-item" href="#">15px </a></li>
-            <li><a class="dropdown-item" href="#">16px </a></li>
-            <li><a class="dropdown-item" href="#">17px </a></li>
-            <li><a class="dropdown-item" href="#">18px </a></li>
-            <li><a class="dropdown-item" href="#">19px </a></li>
-            <li><a class="dropdown-item" href="#">20px </a></li>
-            <li><a class="dropdown-item" href="#">22px </a></li>
-            <li><a class="dropdown-item" href="#">26px </a></li>
-          </ul>
-
-          <input type="checkbox" class="btn-check" id="timestampCb" autocomplete="off">
-          <label class="col-1 btn btn-outline-secondary darkBtn" for="timestampCb">TS</label>
-
-          <input type="checkbox" class="btn-check" id="hexCb" autocomplete="off">
-          <label class="col-1 btn btn-outline-secondary darkBtn" for="hexCb">HEX</label>
-
-          <input type="checkbox" class="btn-check" id="lockCb" autocomplete="off">
-          <label class="col-1 btn btn-outline-secondary darkBtn" for="lockCb"> <img id="lockedStat" src="res/resources/unlocked-nobg.png" alt="lockedCb" width="20" height="25"> </label>
-          
-          <button type="button" class="col btn btn-outline-success" autocomplete="off" id="connect">
-            Connect
-          </button>
-        </div>
-
-        <div class="row mb-1">
-          <button class="col  btn btn-outline-primary" type="button" id="clearBtn">
-            Clear
-          </button>
-          <button class="col btn btn-outline-primary" type="button" id="logToFileBtn">
-            Log To File
-          </button>
-          <button type="button" class="col btn btn-outline-primary" id="openFileBtn">
-            Open File
-          </button>
-          <button type="button" class="col btn btn-outline-primary" id="openFiltersBtn">
-            Filters
-          </button>
-          <button type="button" class="col btn btn-outline-primary collapsableCol" id="openAutoRspBtn">
-            Autoresponses
-          </button>
-          <input type="checkbox" class="btn-check" id="darkModeCb" checked autocomplete="off">
-          <label class="col-1 btn btn-outline-secondary darkBtn" for="darkModeCb"> <img id="darkModeStat" src="res/resources/whiteShquare.png" alt="lockedCb" width="22" height="22"> </label>
-        </div>
-
-        <div class="row mb-1" id="outputRow">
-          <pre class="col form-control mb-0" id="output" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-right-radius: 0; border-bottom-right-radius: 0; white-space: pre-wrap;"></pre>
-          <pre class="col form-control mb-0" id="outputFiltered" style="resize: none; overflow-y: auto; overflow-x: hidden; border-top-left-radius: 0; border-bottom-left-radius: 0; white-space: pre-wrap;"></pre>
-        </div>
-
-        <div class="row mb-1 collapsableRow showIfMacrosFilled">
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-11">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-12">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-13">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-14">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-15">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-16">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-17">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-18">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-19">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-20">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-21">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-22">
-            -
-          </button>
-        </div>
-
-        <div class="row mb-1 collapsableRow" id="macroExpansionControl">
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-1">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-2">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-3">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-4">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-5">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-6">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-7">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-8">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-9">
-            -
-          </button>
-          <button type="button" class="col btn btn-outline-primary macroBtn" autocomplete="off" id="Macro-10">
-            -
-          </button>
-
-          <input type="checkbox" class="btn-check" id="editModeCb" autocomplete="off">
-          <label class="col-2 btn btn-outline-primary" for="editModeCb">Edit</label>
-        </div>
-
-        <div class="row mb-1 collapsableRow">
-          <input type="text" class="col form-control" aria-label="txMsg" aria-describedby="sendMsgBtn" id="sendMsgText" style="border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-width: 0;">
-          <div class="col-2 col-xl-1 g-0">
-            <input type="text" class="form-control" id="sendTmo" style="border-radius: 0; border-right-width: 0;" placeholder="Send TMO" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-          </div>
-          <button type="button" class="col-1 btn btn-outline-secondary darkBtn" type="button" id="sendMsgBtn" style="border-radius: 0;">Send</button>
-          <button type="button" class="col-auto btn btn-outline-secondary darkBtn dropup dropdown-toggle dropdown-toggle-split" id="macroDD" data-bs-toggle="dropdown" aria-expanded="false" style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-left-width: 0;">
-            <span class="visually-hidden">Toggle Dropdown</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" id="macroDDContent" style="font-size: 10px; overflow-y: scroll;"> </ul>
-
-          <input type="checkbox" class="btn-check" id="rtsBtn" autocomplete="off">
-          <label class="col-1 btn btn-outline-primary" for="rtsBtn">RTS</label>
-          
-          <input type="checkbox" class="btn-check" id="dtrBtn" autocomplete="off">
-          <label class="col-1 btn btn-outline-primary" for="dtrBtn">DTR</label>
-        </div>
+    <!-- connection toolbar -->
+    <header class="flex items-center gap-2 px-3 py-2 border-b border-edge flex-wrap">
+      <div class="flex p-0.5 rounded-md border border-edge bg-panel" role="group" aria-label="Mode">
+        <button type="button" class="seg" id="modeSerialBtn" aria-pressed="true">Serial</button>
+        <button type="button" class="seg" id="modeTcpBtn" aria-pressed="false">TCP</button>
       </div>
+
+      <div class="flex items-center gap-2" id="serialFields">
+        <select class="field w-80" id="portSelect" title="Serial port">
+          <option value="">Port…</option>
+        </select>
+        <select class="field w-32" id="baudSelect" title="Baud rate">
+          <option value="">Baud…</option>
+          <option>1200</option><option>2400</option><option>4800</option><option>9600</option>
+          <option>14400</option><option>19200</option><option>28800</option><option>38400</option>
+          <option>57600</option><option selected>115200</option><option>128000</option><option>230400</option>
+          <option>256000</option><option>460800</option><option>921600</option>
+        </select>
+      </div>
+
+      <input type="text" class="field w-28 hidden" id="tcpPortInput" placeholder="Listen port"
+             maxlength="5" inputmode="numeric" title="TCP listen port">
+
+      <button type="button" class="btn btn-primary w-28" id="connectBtn">Connect</button>
+
+      <span class="inline-flex items-center gap-1.5 text-dim" id="statusPill">
+        <span class="size-2 rounded-full bg-dim/60" id="statusDot"></span>
+        <span id="statusText">Disconnected</span>
+      </span>
+
+      <span class="flex-1"></span>
+
+      <button type="button" class="chip" id="tsBtn" aria-pressed="false" title="Prefix received lines with a timestamp">TS</button>
+      <button type="button" class="chip" id="hexBtn" aria-pressed="false" title="Show received data as hex">HEX</button>
+      <select class="field w-24" id="fontSelect" title="Terminal font size">
+        <option>10px</option><option>11px</option><option>12px</option><option>13px</option>
+        <option>14px</option><option>15px</option><option selected>16px</option><option>17px</option>
+        <option>18px</option><option>19px</option><option>20px</option><option>22px</option><option>26px</option>
+      </select>
+      <button type="button" class="btn-ghost btn" id="themeBtn" title="Toggle light/dark theme">◐</button>
+    </header>
+
+    <!-- output tools -->
+    <div class="flex items-center gap-2 px-3 py-2 border-b border-edge">
+      <button type="button" class="btn" id="clearBtn">Clear</button>
+      <button type="button" class="btn" id="logBtn">Log to file</button>
+      <button type="button" class="btn btn-ghost" id="openFileBtn" title="Open the current log file, or the last one if logging is stopped">Open log</button>
+      <span class="flex-1"></span>
+      <select class="field w-28" id="scrollbackSelect" title="Lines of history kept per pane — lower is snappier">
+        <option value="1000">1k lines</option>
+        <option value="2000" selected>2k lines</option>
+        <option value="5000">5k lines</option>
+        <option value="10000">10k lines</option>
+      </select>
+      <button type="button" class="btn" id="filtersBtn">Filters</button>
+      <button type="button" class="btn" id="autoRspBtn">Autoresponses</button>
     </div>
+
+    <!-- terminal panes -->
+    <main class="flex-1 flex min-h-0" id="outputRow">
+      <div class="relative flex min-w-0" id="outputWrap" style="flex: 1 1 50%;">
+        <pre class="term-pane flex-1" id="output" data-empty="Waiting for data…"></pre>
+        <button type="button" id="jumpPillMain"
+          class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 z-10 btn bg-panel2/95 border-accent/50 text-accent shadow-lg backdrop-blur">
+          Paused — jump to bottom ↓
+        </button>
+      </div>
+      <div class="w-1 shrink-0 cursor-col-resize bg-edge hover:bg-accent/60 transition-colors" id="divider" title="Drag to resize"></div>
+      <div class="relative flex min-w-0" id="outputFilteredWrap" style="flex: 1 1 50%;">
+        <pre class="term-pane flex-1" id="outputFiltered" data-empty="Lines matching a filter appear here"></pre>
+        <button type="button" id="jumpPillFlt"
+          class="hidden absolute bottom-3 left-1/2 -translate-x-1/2 z-10 btn bg-panel2/95 border-accent/50 text-accent shadow-lg backdrop-blur">
+          Paused — jump to bottom ↓
+        </button>
+      </div>
+    </main>
+
+    <!-- macros -->
+    <div class="px-3 py-2 border-t border-edge" id="macroSection">
+      <div class="grid grid-cols-[repeat(11,minmax(0,1fr))] gap-1.5" id="macroRowMain"></div>
+      <div class="grid grid-cols-[repeat(12,minmax(0,1fr))] gap-1.5 mt-1.5 hidden" id="macroRowExtra"></div>
+    </div>
+
+    <!-- send row -->
+    <div class="flex items-center gap-2 px-3 pb-3 pt-1" id="sendSection">
+      <div class="relative flex-1 flex">
+        <input type="text" class="field flex-1 rounded-r-none font-mono" id="sendText" placeholder="Type a message — Enter to send">
+        <div class="absolute bottom-full left-0 right-0 mb-1 hidden max-h-64 overflow-y-auto rounded-md border border-edge bg-panel shadow-xl z-20" id="macroListPop"></div>
+      </div>
+      <input type="text" class="field w-24 rounded-none border-l-0" id="sendTmo" placeholder="Every ms" inputmode="numeric" title="Repeat send every N milliseconds">
+      <button type="button" class="btn rounded-l-none border-l-0 w-24" id="sendBtn">Send</button>
+      <button type="button" class="btn btn-ghost" id="macroListBtn" title="Insert a line from macros.txt">☰</button>
+      <span class="w-px h-6 bg-edge"></span>
+      <button type="button" class="chip" id="rtsBtn" aria-pressed="false" title="Toggle RTS line">RTS</button>
+      <button type="button" class="chip" id="dtrBtn" aria-pressed="false" title="Toggle DTR line">DTR</button>
+    </div>
+
+    <!-- slide-over panels -->
+    <div class="fixed inset-0 bg-black/40 z-30 hidden" id="panelScrim"></div>
+    <aside class="panel-aside" id="sidePanel" aria-hidden="true">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-edge">
+        <h2 class="font-medium" id="panelTitle">Filters</h2>
+        <button type="button" class="btn btn-ghost" id="panelCloseBtn" title="Close (Esc)">✕</button>
+      </div>
+      <p class="px-4 pt-3 text-dim text-xs" id="panelHint"></p>
+      <div class="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-2" id="panelRows"></div>
+      <div class="flex items-center gap-2 px-4 py-3 border-t border-edge">
+        <button type="button" class="btn" id="panelAddBtn">+ Add</button>
+        <span class="flex-1"></span>
+        <button type="button" class="btn btn-danger" id="panelClearBtn">Clear all</button>
+        <button type="button" class="btn btn-primary" id="panelSaveBtn">Save</button>
+      </div>
+    </aside>
+
+    <!-- toasts -->
+    <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 items-end" id="toasts"></div>
+
+    <!-- shared two-field input dialog (macro editing) -->
+    <dialog id="inputDialog" class="w-96">
+      <form method="dialog" class="flex flex-col">
+        <h2 class="px-4 py-3 border-b border-edge font-medium" id="dlgTitle"></h2>
+        <div class="px-4 py-3 flex flex-col gap-3">
+          <label class="flex flex-col gap-1 text-dim text-xs">
+            <span id="dlgLabel1"></span>
+            <input type="text" class="field" id="dlgInput1">
+          </label>
+          <label class="flex flex-col gap-1 text-dim text-xs">
+            <span id="dlgLabel2"></span>
+            <input type="text" class="field font-mono" id="dlgInput2">
+          </label>
+        </div>
+        <div class="flex justify-end gap-2 px-4 py-3 border-t border-edge">
+          <button type="button" class="btn" id="dlgCancel">Cancel</button>
+          <button type="submit" value="submit" class="btn btn-primary" id="dlgSave">Save</button>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>

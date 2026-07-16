@@ -54,9 +54,9 @@ class TCPHandler { // single-client server: a new connection replaces the previo
         }
     };
     sendMsg(msg) {
-        if (this.currSocket != null) {
-            this.currSocket.write(msg + '\r\n');
-        }
+        if (this.currSocket == null) return false;
+        this.currSocket.write(msg + '\r\n');
+        return true;
     };
 };
 

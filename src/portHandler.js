@@ -1,7 +1,7 @@
 const { SerialPort, ReadlineParser } = require('serialport');
 const serPort = require('serialport');
 
-const FLUSH_INTERVAL_MS = 16; // batch received lines and send them to the renderer roughly once per frame
+const FLUSH_INTERVAL_MS = 8; // batch received lines to the renderer; short enough that output flows instead of landing in blocks
 
 const escapeHtml = (text) => text
     .replace(/&/g, '&amp;')
@@ -92,7 +92,7 @@ class PortHandler {
         ranges.forEach((range) => {
             if (range.start < pos) return; // overlaps an earlier highlight
             html += escapeHtml(text.slice(pos, range.start));
-            html += `<span style="background-color: ${range.color}; color: ${this.#getTextColor(range.color)}; padding: 0.2rem">`
+            html += `<span style="background-color: ${range.color}; color: ${this.#getTextColor(range.color)}; padding: 0 0.25rem; border-radius: 0.25rem">`
                 + escapeHtml(text.slice(range.start, range.end)) + '</span>';
             pos = range.end;
         });
@@ -142,9 +142,12 @@ class PortHandler {
         }
     }
     internalLineEvt(prefix, msgText) {
-        const msgToSend = this.fileHandler.formatAndPrintLn(msgText, prefix);
-        this.sendMsg(msgText); // send raw msg
-        this.#enqueueLine(escapeHtml(msgToSend), false);
+        const sent = this.sendMsg(msgText); // send raw msg
+        if (sent) { // only echo to the terminal what actually went out
+            const msgToSend = this.fileHandler.formatAndPrintLn(msgText, prefix);
+            this.#enqueueLine(escapeHtml(msgToSend), false);
+        }
+        return sent;
     }
     RTSEvt(args) {
         if (this.SPort == null) return;
@@ -168,9 +171,12 @@ class PortHandler {
     sendMsg(msg) {
         if (this.SPort != null && this.SPort.isOpen) {
             this.SPort.write((msg + '\r\n'));
-        } else if (this.altSendFn != null) {
-            this.altSendFn(msg);
+            return true;
         }
+        if (this.altSendFn != null) {
+            return this.altSendFn(msg) === true;
+        }
+        return false;
     };
     updateFilters(filters) {
         this.filters = filters;

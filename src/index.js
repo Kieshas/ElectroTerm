@@ -8,23 +8,17 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const handleSize = (mainWin) => {
-  mainWin.on('resize', () => {
-    const size = mainWin.getContentSize();
-    mainWin.webContents.send('resizeEvt', size);
-  });
-}
-
 let mainWindow;
 
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    minHeight: 600,
-    minWidth: 800,
+    width: 900,
+    height: 640,
+    minHeight: 560,
+    minWidth: 860,
     autoHideMenuBar: true,
+    backgroundColor: '#16171b',
     webPreferences: {
       preload: ElectronPath.join(__dirname, 'preload.js'),
     },
@@ -33,11 +27,7 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadFile(ElectronPath.join(__dirname, 'index.html'));
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
-  actionOnLoad().then(() => {
-    handleSize(mainWindow);
-  });
+  actionOnLoad();
   mainWindow.on('close', actionOnClose); // register evt after window creation
 };
 
@@ -62,47 +52,6 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-
-const createFilterWindow = () => {
-  // Create the browser window.
-  const filterWindow = new BrowserWindow({
-    width: 400,
-    height: 400,
-    minHeight: 400,
-    minWidth: 400,
-    alwaysOnTop: true,
-    minimizable: false,
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: ElectronPath.join(__dirname, 'preload.js'),
-    },
-  });
-
-  filterWindow.loadFile(ElectronPath.join(__dirname, 'filters.html'));
-  return filterWindow;
-};
-
-const createAutoRspWindow = () => {
-  // Create the browser window.
-  const filterWindow = new BrowserWindow({
-    width: 400,
-    height: 400,
-    minHeight: 400,
-    minWidth: 400,
-    alwaysOnTop: true,
-    minimizable: false,
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: ElectronPath.join(__dirname, 'preload.js'),
-    },
-  });
-
-  filterWindow.loadFile(ElectronPath.join(__dirname, 'autoResponse.html'));
-  return filterWindow;
-};
 
 const actionOnClose = (evt) => {
   const { SaveSettings } = require('./event-handler');
@@ -140,6 +89,4 @@ module.exports = {
   getMainWin,
   getPath,
   getAppPath,
-  createFilterWindow,
-  createAutoRspWindow,
 };

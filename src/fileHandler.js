@@ -49,6 +49,9 @@ class FileHandler { // visa sita pathu slamsta turetu handlint porto clase i thi
     readFile(filePath) {
         return fileSystem.readFileSync(filePath)
     };
+    fileExists(filePath) {
+        return fileSystem.existsSync(filePath);
+    };
     createFile(filePath) {
         fileSystem.appendFileSync(filePath, "", 'utf-8');
     };

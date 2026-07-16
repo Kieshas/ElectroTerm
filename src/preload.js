@@ -10,17 +10,12 @@ const ipc = {
             'disconnectPort',
             'restartEvt',
             'timeStamp',
-            'openFile',
             'hexCheck',
-            'sendMsg',
-            'openFilters',
-            'openAutoRsp',
             'closeServer',
             'safeToClose',
         ],
         // From main to render.
         'receive': [
-            'resizeEvt',
             'printLn',
             'printFilteredLn',
             'onCloseEvt',
@@ -28,15 +23,15 @@ const ipc = {
         // From render to main and back again.
         'sendReceive': [
             'populateDD',
-            'updateSizeOnLoad',
             'setPrmsAndConnect',
             'selectFile',
-            'filtersLoaded',
-            'autoRspLoaded',
             'saveSettings',
             'requestSettings',
             'openServer',
             'requestMacros',
+            'saveMacros',
+            'sendMsg',
+            'openFile',
         ]
     }
 };

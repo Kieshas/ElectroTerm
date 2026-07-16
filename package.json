@@ -10,7 +10,11 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "css": "tailwindcss -i src/res/input.css -o css/app.css --minify",
+    "prestart": "npm run css",
+    "prepackage": "npm run css",
+    "premake": "npm run css"
   },
   "keywords": [],
   "author": {
@@ -33,7 +37,10 @@
           "name": "@electron-forge/maker-deb",
           "config": {}
         }
-      ]
+      ],
+      "rebuildConfig": {
+        "onlyModules": []
+      }
     }
   },
   "dependencies": {
@@ -46,8 +53,10 @@
     "@electron-forge/maker-rpm": "^7.11.2",
     "@electron-forge/maker-squirrel": "^7.11.2",
     "@electron-forge/maker-zip": "^7.11.2",
+    "@tailwindcss/cli": "^4.3.2",
     "electron": "^43.1.1",
-    "patch-package": "^8.0.1"
+    "patch-package": "^8.0.1",
+    "tailwindcss": "^4.3.2"
   },
   "overrides": {
     "tar": "^7.5.20",
